@@ -240,7 +240,7 @@ body {
 .navbar {
     width: 100%;
     max-width: 1200px;
-    background: rgba(255, 255, 255, 0.15);
+    background: linear-gradient(135deg, #ff8c00 0%, #ff5500 100%);
     backdrop-filter: blur(10px);
     padding: clamp(14px, 3vw, 20px) clamp(20px, 5vw, 40px);
     display: flex;
