@@ -105,6 +105,36 @@
             margin-top: 2px;
         }
 
+        .btn-logout {
+            margin-left: auto;
+            padding: 10px 24px;
+            background: rgba(255, 255, 255, 0.25);
+            color: white;
+            font-size: 14px;
+            font-weight: 700;
+            border: 1px solid rgba(255,255,255,0.35);
+            border-radius: 50px;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition:
+                transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.18s ease,
+                border-radius 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+                background 0.2s ease;
+        }
+
+        .btn-logout:hover {
+            background: rgba(255,255,255,0.4);
+            transform: scale(1.06);
+            border-radius: 18px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        }
+
+        .btn-logout:active {
+            transform: scale(0.93);
+            border-radius: 50px;
+        }
+
         /* GRID */
         .button-grid {
             width: 100%;
@@ -204,6 +234,7 @@
                 <h1>Portal Website SE2026</h1>
                 <p>BPS Kabupaten Sukoharjo</p>
             </div>
+            <button class="btn-logout" onclick="logout()">Logout</button>
         </div>
 
         <div class="button-grid">
@@ -226,5 +257,11 @@
         </div>
     </div>
 
+    <script>
+        function logout() {
+            sessionStorage.removeItem('currentUser');
+            window.location.href = 'index.html';
+        }
+    </script>
 </body>
 </html>
