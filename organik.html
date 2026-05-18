@@ -105,8 +105,17 @@
             margin-top: 2px;
         }
 
-        .btn-logout {
+        .navbar-welcome {
             margin-left: auto;
+            color: white;
+            font-size: clamp(12px, 2vw, 15px);
+            font-weight: 700;
+            margin-right: 14px;
+            white-space: nowrap;
+        }
+
+        .btn-logout {
+            margin-left: 0;
             padding: 10px 24px;
             background: rgba(255, 255, 255, 0.25);
             color: white;
@@ -234,6 +243,7 @@
                 <h1>Portal Website SE2026</h1>
                 <p>BPS Kabupaten Sukoharjo</p>
             </div>
+            <div class="navbar-welcome">Welcome, <span id="welcomeUser"></span>!</div>
             <button class="btn-logout" onclick="logout()">Logout</button>
         </div>
 
@@ -258,6 +268,11 @@
     </div>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const user = sessionStorage.getItem('currentUser') || 'ORGANIK3311';
+            document.getElementById('welcomeUser').textContent = user;
+        });
+
         function logout() {
             sessionStorage.removeItem('currentUser');
             window.location.href = 'index.html';
