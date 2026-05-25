@@ -149,6 +149,25 @@ body {
     color: #bbb;
 }
 
+.toggle-pw {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #bbb;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    transition: color 0.2s;
+}
+
+.toggle-pw:hover {
+    color: #ff6a00;
+}
+
 .input-group input:focus {
     border-color: #ff6a00;
     box-shadow: 0 0 0 4px rgba(255, 106, 0, 0.12);
