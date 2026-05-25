@@ -149,23 +149,23 @@ body {
     color: #bbb;
 }
 
-.toggle-pw {
-    position: absolute;
-    right: 14px;
-    top: 50%;
-    transform: translateY(-50%);
+.toggle-pw-text {
     background: none;
     border: none;
     cursor: pointer;
-    color: #bbb;
-    padding: 4px;
-    display: flex;
-    align-items: center;
-    transition: color 0.2s;
+    color: #ff6a00;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 0;
+    margin-top: 6px;
+    margin-bottom: 2px;
+    text-align: left;
+    display: block;
+    transition: opacity 0.2s;
 }
 
-.toggle-pw:hover {
-    color: #ff6a00;
+.toggle-pw-text:hover {
+    opacity: 0.7;
 }
 
 .input-group input:focus {

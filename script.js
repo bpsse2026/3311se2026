@@ -62,12 +62,10 @@ function handleLogin(e) {
 
 function togglePassword() {
     const input = document.getElementById('password');
-    const eyeIcon = document.getElementById('eyeIcon');
-    const eyeOffIcon = document.getElementById('eyeOffIcon');
+    const btn = document.getElementById('toggleBtn');
     const isHidden = input.type === 'password';
     input.type = isHidden ? 'text' : 'password';
-    eyeIcon.style.display = isHidden ? 'none' : 'block';
-    eyeOffIcon.style.display = isHidden ? 'block' : 'none';
+    btn.textContent = isHidden ? 'Sembunyikan password' : 'Lihat password';
 }
 
 function logout() {
