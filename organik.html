@@ -5,11 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portal Website SE2026 - BPS Kabupaten Sukoharjo</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -26,202 +22,242 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* FLOATING BUBBLES */
         .bubbles {
-            position: fixed;
-            top: 0; left: 0;
+            position: fixed; top: 0; left: 0;
             width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 0;
-            overflow: hidden;
+            pointer-events: none; z-index: 0; overflow: hidden;
         }
-
         .bubble {
-            position: absolute;
-            bottom: -200px;
-            border-radius: 50%;
+            position: absolute; bottom: -200px; border-radius: 50%;
             background: rgba(255, 200, 50, 0.18);
             animation: floatUp linear infinite;
         }
-
-        .bubble:nth-child(1) { width: 120px; height: 120px; left: 8%;  animation-duration: 9s;  animation-delay: 0s; }
-        .bubble:nth-child(2) { width: 70px;  height: 70px;  left: 22%; animation-duration: 7s;  animation-delay: 1.5s; }
-        .bubble:nth-child(3) { width: 180px; height: 180px; left: 45%; animation-duration: 11s; animation-delay: 3s; }
-        .bubble:nth-child(4) { width: 90px;  height: 90px;  left: 63%; animation-duration: 8s;  animation-delay: 0.8s; }
-        .bubble:nth-child(5) { width: 55px;  height: 55px;  left: 78%; animation-duration: 6s;  animation-delay: 2s; }
-        .bubble:nth-child(6) { width: 140px; height: 140px; left: 88%; animation-duration: 10s; animation-delay: 4s; }
-
+        .bubble:nth-child(1) { width:120px; height:120px; left:8%;  animation-duration:9s;  animation-delay:0s; }
+        .bubble:nth-child(2) { width:70px;  height:70px;  left:22%; animation-duration:7s;  animation-delay:1.5s; }
+        .bubble:nth-child(3) { width:180px; height:180px; left:45%; animation-duration:11s; animation-delay:3s; }
+        .bubble:nth-child(4) { width:90px;  height:90px;  left:63%; animation-duration:8s;  animation-delay:0.8s; }
+        .bubble:nth-child(5) { width:55px;  height:55px;  left:78%; animation-duration:6s;  animation-delay:2s; }
+        .bubble:nth-child(6) { width:140px; height:140px; left:88%; animation-duration:10s; animation-delay:4s; }
         @keyframes floatUp {
-            0%   { transform: translateY(0) scale(1);       opacity: 0.6; }
+            0%   { transform: translateY(0) scale(1);        opacity: 0.6; }
             50%  { transform: translateY(-50vh) scale(1.05); opacity: 0.4; }
-            100% { transform: translateY(-110vh) scale(1);  opacity: 0; }
+            100% { transform: translateY(-110vh) scale(1);   opacity: 0; }
         }
 
-        /* PAGE WRAPPER */
         .page-wrapper {
-            position: relative;
-            z-index: 1;
+            position: relative; z-index: 1;
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 30px 20px;
+            display: flex; flex-direction: column; align-items: center;
+            padding: 24px 20px 40px;
         }
 
         /* NAVBAR */
         .navbar {
-            width: 100%;
-            max-width: 1200px;
+            width: 100%; max-width: 1200px;
             background: linear-gradient(135deg, #ff8c00 0%, #ff5500 100%);
-            padding: clamp(14px, 3vw, 20px) clamp(20px, 5vw, 40px);
-            display: flex;
-            align-items: center;
-            gap: 16px;
+            padding: clamp(12px,2.5vw,18px) clamp(16px,4vw,36px);
+            display: flex; align-items: center; gap: 14px;
             border-radius: 20px;
-            box-shadow: 0 4px 20px rgba(255, 80, 0, 0.3);
-            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(255,80,0,0.3);
+            margin-bottom: 24px;
         }
-
         .navbar-logo {
-            width: clamp(40px, 8vw, 54px);
-            height: clamp(40px, 8vw, 54px);
-            object-fit: cover;
-            border-radius: 10px;
-            flex-shrink: 0;
+            width: clamp(40px,8vw,52px); height: clamp(40px,8vw,52px);
+            object-fit: cover; border-radius: 10px; flex-shrink: 0;
         }
-
         .navbar-text h1 {
-            font-size: clamp(14px, 2.5vw, 20px);
-            font-weight: 900;
-            color: white;
-            letter-spacing: 0.5px;
-            line-height: 1.2;
+            font-size: clamp(13px,2.2vw,19px); font-weight: 900;
+            color: white; line-height: 1.2;
         }
-
         .navbar-text p {
-            font-size: clamp(11px, 1.8vw, 13px);
-            color: rgba(255,255,255,0.85);
-            font-weight: 600;
-            margin-top: 2px;
+            font-size: clamp(10px,1.6vw,12px);
+            color: rgba(255,255,255,0.85); font-weight: 600; margin-top: 2px;
         }
-
         .navbar-welcome {
-            margin-left: auto;
-            color: white;
-            font-size: clamp(12px, 2vw, 15px);
-            font-weight: 700;
-            margin-right: 14px;
-            white-space: nowrap;
+            margin-left: auto; color: white;
+            font-size: clamp(11px,1.8vw,14px); font-weight: 700;
+            margin-right: 14px; white-space: nowrap;
         }
-
         .btn-logout {
-            margin-left: 0;
-            padding: 10px 24px;
-            background: rgba(255, 255, 255, 0.25);
-            color: white;
-            font-size: 14px;
-            font-weight: 700;
+            padding: 9px 22px;
+            background: rgba(255,255,255,0.25); color: white;
+            font-size: 13px; font-weight: 700;
             border: 1px solid rgba(255,255,255,0.35);
-            border-radius: 50px;
-            cursor: pointer;
-            flex-shrink: 0;
-            transition:
-                transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1),
-                box-shadow 0.18s ease,
-                border-radius 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
-                background 0.2s ease;
+            border-radius: 50px; cursor: pointer; flex-shrink: 0;
+            transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1),
+                        box-shadow 0.18s ease,
+                        border-radius 0.25s cubic-bezier(0.34,1.56,0.64,1),
+                        background 0.2s;
         }
-
         .btn-logout:hover {
-            background: rgba(255,255,255,0.4);
-            transform: scale(1.06);
-            border-radius: 18px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            background: rgba(255,255,255,0.4); transform: scale(1.06);
+            border-radius: 18px; box-shadow: 0 8px 24px rgba(0,0,0,0.15);
         }
+        .btn-logout:active { transform: scale(0.93); border-radius: 50px; }
 
-        .btn-logout:active {
-            transform: scale(0.93);
-            border-radius: 50px;
-        }
-
-        /* GRID */
-        .button-grid {
-            width: 100%;
-            max-width: 1200px;
+        /* MAIN GRID */
+        .main-grid {
+            width: 100%; max-width: 1200px;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
-            gap: clamp(14px, 3vw, 24px);
+            grid-template-columns: 1fr 340px;
+            gap: 20px;
+            align-items: start;
         }
 
-        /* DYNAMIC ISLAND BUTTON */
-        .nav-button {
-            background: rgba(255, 255, 255, 0.95);
-            padding: clamp(22px, 4vw, 36px) clamp(16px, 3vw, 24px);
-            border-radius: 24px;
+        /* CARDS */
+        .card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: clamp(18px,3vw,26px);
+            box-shadow: 0 6px 24px rgba(0,0,0,0.1);
+        }
+        .card-title {
+            font-size: clamp(15px,2.2vw,18px);
+            font-weight: 900; color: #ff4500;
+            margin-bottom: 16px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .card-title span { font-size: 20px; }
+
+        /* MY LEARNING STEP */
+        .learning-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+        .learn-btn {
+            background: linear-gradient(135deg, #fff8f0, #fff0e0);
+            border: 2px solid #ffd0a0;
+            border-radius: 16px;
+            padding: 16px 10px;
             text-decoration: none;
             text-align: center;
-            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
             cursor: pointer;
-            transition:
-                transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1),
-                box-shadow 0.18s ease,
-                border-radius 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-            position: relative;
-            overflow: hidden;
-            will-change: transform;
+            transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1),
+                        box-shadow 0.18s ease,
+                        border-radius 0.25s cubic-bezier(0.34,1.56,0.64,1);
+            position: relative; overflow: hidden;
+        }
+        .learn-btn:hover {
+            transform: scale(1.07) translateY(-3px);
+            border-radius: 12px;
+            box-shadow: 0 10px 28px rgba(255,80,0,0.25);
+            border-color: #ff8c00;
+        }
+        .learn-btn:active { transform: scale(0.93); border-radius: 16px; }
+        .learn-icon { font-size: clamp(24px,4vw,32px); margin-bottom: 8px; }
+        .learn-label {
+            font-size: clamp(10px,1.5vw,13px);
+            font-weight: 800; color: #ff4500; line-height: 1.3;
         }
 
-        .nav-button::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: rgba(255, 140, 0, 0.06);
-            opacity: 0;
-            transition: opacity 0.2s;
-            border-radius: inherit;
+        /* LACI SAKU */
+        .laci-list {
+            display: flex; flex-direction: column; gap: 10px;
+            margin-top: 4px;
+        }
+        .laci-item {
+            display: flex; align-items: center; gap: 14px;
+            background: linear-gradient(135deg, #fff8f0, #fff0e0);
+            border: 2px solid #ffd0a0;
+            border-radius: 14px; padding: 14px 18px;
+            text-decoration: none; cursor: pointer;
+            transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1),
+                        box-shadow 0.18s ease,
+                        border-radius 0.25s cubic-bezier(0.34,1.56,0.64,1);
+            position: relative; overflow: hidden;
+        }
+        .laci-item:hover {
+            transform: scale(1.03) translateX(4px);
+            border-radius: 10px;
+            box-shadow: 0 8px 24px rgba(255,80,0,0.2);
+            border-color: #ff8c00;
+        }
+        .laci-item:active { transform: scale(0.97); border-radius: 14px; }
+        .laci-dot {
+            width: 10px; height: 10px; border-radius: 50%;
+            background: linear-gradient(135deg, #ffb300, #ff4500);
+            flex-shrink: 0;
+        }
+        .laci-text {
+            font-size: clamp(12px,1.8vw,14px);
+            font-weight: 700; color: #cc3300;
+        }
+        .laci-arrow {
+            margin-left: auto; color: #ff8c00; font-size: 16px;
         }
 
-        .nav-button:hover {
-            transform: scale(1.06) translateY(-4px);
-            border-radius: 18px;
-            box-shadow: 0 16px 40px rgba(255, 80, 0, 0.3);
-        }
+        /* LEFT COLUMN SPACING */
+        .left-col { display: flex; flex-direction: column; gap: 20px; }
 
-        .nav-button:hover::after {
-            opacity: 1;
+        /* INFO PENTING */
+        .info-penting-content {
+            font-size: 13px; color: #555; line-height: 1.8;
+            min-height: 100px;
         }
-
-        .nav-button:active {
-            transform: scale(0.93);
-            border-radius: 24px;
-            box-shadow: 0 4px 12px rgba(255, 80, 0, 0.2);
+        .info-item {
+            display: flex; gap: 10px; align-items: flex-start;
+            padding: 10px 0; border-bottom: 1px solid #ffe8d0;
         }
+        .info-item:last-child { border-bottom: none; }
+        .info-badge {
+            background: linear-gradient(135deg, #ffb300, #ff4500);
+            color: white; font-size: 10px; font-weight: 800;
+            padding: 3px 8px; border-radius: 20px; flex-shrink: 0;
+            margin-top: 2px;
+        }
+        .info-text { font-size: 12px; color: #555; font-weight: 600; line-height: 1.5; }
 
-        .button-icon {
-            font-size: clamp(36px, 6vw, 52px);
+        /* JADWAL KEGIATAN / CALENDAR */
+        .calendar-header {
+            display: flex; align-items: center; justify-content: space-between;
             margin-bottom: 12px;
-            display: block;
         }
-
-        .button-text {
-            color: #ff4500;
-            font-size: clamp(14px, 2.5vw, 18px);
-            font-weight: 800;
-            letter-spacing: 0.5px;
+        .cal-nav {
+            background: none; border: none; cursor: pointer;
+            color: #ff6a00; font-size: 18px; font-weight: 900;
+            padding: 4px 8px; border-radius: 8px;
+            transition: background 0.2s;
         }
+        .cal-nav:hover { background: #fff0e0; }
+        .cal-month {
+            font-size: 14px; font-weight: 900; color: #ff4500;
+        }
+        .cal-grid {
+            display: grid; grid-template-columns: repeat(7,1fr);
+            gap: 4px; text-align: center;
+        }
+        .cal-day-name {
+            font-size: 10px; font-weight: 800; color: #ff8c00;
+            padding: 4px 0;
+        }
+        .cal-day {
+            font-size: 12px; font-weight: 600; color: #555;
+            padding: 6px 2px; border-radius: 8px; cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+        }
+        .cal-day:hover { background: #ffe8d0; color: #ff4500; }
+        .cal-day.today {
+            background: linear-gradient(135deg, #ffb300, #ff4500);
+            color: white; font-weight: 900;
+        }
+        .cal-day.other-month { color: #ccc; }
+        .cal-day.empty { cursor: default; }
 
+        /* RIGHT COLUMN */
+        .right-col { display: flex; flex-direction: column; gap: 20px; }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .main-grid { grid-template-columns: 1fr; }
+            .learning-grid { grid-template-columns: repeat(2,1fr); }
+            .right-col { order: -1; }
+        }
         @media (max-width: 480px) {
-            .button-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .navbar {
-                border-radius: 16px;
-            }
+            .navbar { border-radius: 16px; }
+            .navbar-welcome { display: none; }
         }
     </style>
 </head>
@@ -237,6 +273,8 @@
     </div>
 
     <div class="page-wrapper">
+
+        <!-- NAVBAR -->
         <div class="navbar">
             <img src="logo.jpg" alt="SE2026 Logo" class="navbar-logo">
             <div class="navbar-text">
@@ -247,23 +285,101 @@
             <button class="btn-logout" onclick="logout()">Logout</button>
         </div>
 
-        <div class="button-grid">
-            <a href="https://gojags-classroom.bps.go.id/" class="nav-button" target="_blank">
-                <div class="button-icon">📄</div>
-                <div class="button-text">Web Gojaqs</div>
-            </a>
-            <a href="https://example.com/page2" class="nav-button" target="_blank">
-                <div class="button-icon">📊</div>
-                <div class="button-text">Page 2</div>
-            </a>
-            <a href="https://example.com/page3" class="nav-button" target="_blank">
-                <div class="button-icon">⚙️</div>
-                <div class="button-text">Page 3</div>
-            </a>
-            <a href="https://example.com/page4" class="nav-button" target="_blank">
-                <div class="button-icon">👤</div>
-                <div class="button-text">Page 4</div>
-            </a>
+        <!-- MAIN GRID -->
+        <div class="main-grid">
+
+            <!-- LEFT COLUMN -->
+            <div class="left-col">
+
+                <!-- MY LEARNING STEP -->
+                <div class="card">
+                    <div class="card-title"><span>🎓</span> My Learning Step</div>
+                    <div class="learning-grid">
+                        <a href="https://gojags-classroom.bps.go.id/" class="learn-btn" target="_blank">
+                            <div class="learn-icon">🌐</div>
+                            <div class="learn-label">GoJaqs</div>
+                        </a>
+                        <a href="#" class="learn-btn" target="_blank">
+                            <div class="learn-icon">📋</div>
+                            <div class="learn-label">Absensi Pelatihan</div>
+                        </a>
+                        <a href="#" class="learn-btn" target="_blank">
+                            <div class="learn-icon">📝</div>
+                            <div class="learn-label">Link Soal Quiz</div>
+                        </a>
+                        <a href="#" class="learn-btn" target="_blank">
+                            <div class="learn-icon">📚</div>
+                            <div class="learn-label">Link Soal Pendm.</div>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- LACI SAKU -->
+                <div class="card">
+                    <div class="card-title"><span>👜</span> Laci Saku</div>
+                    <div class="laci-list">
+                        <a href="#" class="laci-item" target="_blank">
+                            <div class="laci-dot"></div>
+                            <div class="laci-text">Daftar Petugas &amp; Kelas</div>
+                            <div class="laci-arrow">›</div>
+                        </a>
+                        <a href="#" class="laci-item" target="_blank">
+                            <div class="laci-dot"></div>
+                            <div class="laci-text">Upload Nota Bensin</div>
+                            <div class="laci-arrow">›</div>
+                        </a>
+                        <a href="#" class="laci-item" target="_blank">
+                            <div class="laci-dot"></div>
+                            <div class="laci-text">Form Nomor Telepon</div>
+                            <div class="laci-arrow">›</div>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- RIGHT COLUMN -->
+            <div class="right-col">
+
+                <!-- INFO PENTING -->
+                <div class="card">
+                    <div class="card-title"><span>📢</span> Info Penting</div>
+                    <div class="info-penting-content">
+                        <div class="info-item">
+                            <span class="info-badge">BARU</span>
+                            <span class="info-text">Jadwal pelatihan gelombang 2 telah ditetapkan. Cek GoJaqs untuk detailnya.</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-badge">INFO</span>
+                            <span class="info-text">Upload nota bensin paling lambat setiap Jumat pukul 15.00 WIB.</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-badge">INFO</span>
+                            <span class="info-text">Pastikan nomor telepon sudah diperbarui di formulir yang tersedia.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- JADWAL KEGIATAN -->
+                <div class="card">
+                    <div class="card-title"><span>📅</span> Jadwal Kegiatan</div>
+                    <div class="calendar-header">
+                        <button class="cal-nav" onclick="changeMonth(-1)">&#8249;</button>
+                        <div class="cal-month" id="calMonth"></div>
+                        <button class="cal-nav" onclick="changeMonth(1)">&#8250;</button>
+                    </div>
+                    <div class="cal-grid" id="calGrid">
+                        <div class="cal-day-name">Min</div>
+                        <div class="cal-day-name">Sen</div>
+                        <div class="cal-day-name">Sel</div>
+                        <div class="cal-day-name">Rab</div>
+                        <div class="cal-day-name">Kam</div>
+                        <div class="cal-day-name">Jum</div>
+                        <div class="cal-day-name">Sab</div>
+                    </div>
+                </div>
+
+            </div>
         </div>
     </div>
 
@@ -271,11 +387,51 @@
         document.addEventListener('DOMContentLoaded', function() {
             const user = sessionStorage.getItem('currentUser') || 'ORGANIK3311';
             document.getElementById('welcomeUser').textContent = user;
+            renderCalendar(currentDate.getFullYear(), currentDate.getMonth());
         });
 
         function logout() {
             sessionStorage.removeItem('currentUser');
             window.location.href = 'index.html';
+        }
+
+        const monthNames = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+        let currentDate = new Date();
+        let viewYear = currentDate.getFullYear();
+        let viewMonth = currentDate.getMonth();
+
+        function changeMonth(dir) {
+            viewMonth += dir;
+            if (viewMonth > 11) { viewMonth = 0; viewYear++; }
+            if (viewMonth < 0)  { viewMonth = 11; viewYear--; }
+            renderCalendar(viewYear, viewMonth);
+        }
+
+        function renderCalendar(year, month) {
+            document.getElementById('calMonth').textContent = monthNames[month] + ' ' + year;
+            const grid = document.getElementById('calGrid');
+            const dayHeaders = grid.querySelectorAll('.cal-day-name');
+            grid.innerHTML = '';
+            dayHeaders.forEach(h => grid.appendChild(h.cloneNode(true)));
+
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const today = new Date();
+
+            for (let i = 0; i < firstDay; i++) {
+                const empty = document.createElement('div');
+                empty.className = 'cal-day empty';
+                grid.appendChild(empty);
+            }
+            for (let d = 1; d <= daysInMonth; d++) {
+                const cell = document.createElement('div');
+                cell.className = 'cal-day';
+                cell.textContent = d;
+                if (d === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+                    cell.classList.add('today');
+                }
+                grid.appendChild(cell);
+            }
         }
     </script>
 </body>
