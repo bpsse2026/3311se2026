@@ -4,8 +4,8 @@ const users = {
     'member2':      { password: 'secure456',      redirect: null },
     'john':         { password: 'john2024',       redirect: null },
     'jane':         { password: 'jane2024',       redirect: null },
-    'MITRA3311':    { password: 'SE26-3311ptg',   redirect: null },
-    'ORGANIK3311':  { password: 'SE26-Org3311',   redirect: 'organik.html' }
+    'ORGANIK3311':    { password: 'SE26-Org',   redirect: null },
+    'MITRA3311':  { password: 'SE26-ptg',   redirect: 'organik.html' }
 };
 
 document.addEventListener('DOMContentLoaded', function() {
