@@ -1,0 +1,23 @@
+{
+  "2026-05-26": [
+    {"time": "08.00 - 10.00", "name": "Briefing Petugas Lapangan Gelombang 2", "loc": "Aula BPS Kab. Sukoharjo"},
+    {"time": "13.00 - 15.00", "name": "Sesi Pendalaman Materi GoJags", "loc": "Online / Zoom"}
+  ],
+  "2026-05-27": [{"time": "08.00 - 12.00", "name": "Pelatihan Petugas - Gelombang 2 Hari 1", "loc": "BPS Kab. Sukoharjo"}],
+  "2026-05-28": [
+    {"time": "08.00 - 12.00", "name": "Pelatihan Petugas - Gelombang 2 Hari 2", "loc": "BPS Kab. Sukoharjo"},
+    {"time": "14.00 - 15.00", "name": "Pengumpulan Pretest Peserta", "loc": "Google Forms"}
+  ],
+  "2026-05-29": [{"time": "08.00 - 12.00", "name": "Pelatihan Petugas - Gelombang 2 Hari 3", "loc": "BPS Kab. Sukoharjo"}],
+  "2026-06-01": [{"time": "08.00 - 17.00", "name": "Pelaksanaan Lapangan SE2026 Dimulai", "loc": "Seluruh Kecamatan"}],
+  "2026-06-05": [
+    {"time": "09.00 - 11.00", "name": "Monitoring Lapangan Minggu 1", "loc": "Koordinasi Kecamatan"},
+    {"time": "15.00", "name": "Batas Upload Nota Bensin", "loc": "Google Drive"}
+  ],
+  "2026-06-12": [{"time": "15.00", "name": "Batas Upload Nota Bensin", "loc": "Google Drive"}],
+  "2026-06-19": [{"time": "15.00", "name": "Batas Upload Nota Bensin", "loc": "Google Drive"}],
+  "2026-06-26": [
+    {"time": "08.00 - 12.00", "name": "Evaluasi Progres Lapangan", "loc": "Aula BPS Kab. Sukoharjo"},
+    {"time": "15.00", "name": "Batas Upload Nota Bensin", "loc": "Google Drive"}
+  ]
+}

@@ -548,6 +548,7 @@
             const user = sessionStorage.getItem('currentUser') || 'ORGANIK3311';
             document.getElementById('welcomeUser').textContent = user;
             renderCalendar(currentDate.getFullYear(), currentDate.getMonth());
+            loadJadwalEvents();
         });
 
         function logout() {
@@ -609,16 +610,23 @@
             ]
         };
 
-        function loadJadwalEvents() {
-            const saved = localStorage.getItem('bps_jadwal_events');
-            if (saved) {
-                try { return JSON.parse(saved); } catch(e) {}
-            }
-            localStorage.setItem('bps_jadwal_events', JSON.stringify(defaultJadwalEvents));
-            return defaultJadwalEvents;
-        }
+        const GH_RAW_URL = 'https://raw.githubusercontent.com/bpsse2026/3311se2026/main/jadwal-events.json';
 
-        let jadwalEvents = loadJadwalEvents();
+        let jadwalEvents = JSON.parse(JSON.stringify(defaultJadwalEvents));
+
+        async function loadJadwalEvents() {
+            try {
+                const res = await fetch(GH_RAW_URL + '?t=' + Date.now());
+                if (res.ok) {
+                    jadwalEvents = await res.json();
+                } else {
+                    jadwalEvents = JSON.parse(JSON.stringify(defaultJadwalEvents));
+                }
+            } catch(e) {
+                jadwalEvents = JSON.parse(JSON.stringify(defaultJadwalEvents));
+            }
+            renderCalendar(viewYear, viewMonth);
+        }
 
         const dayNames = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
 
