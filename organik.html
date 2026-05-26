@@ -246,6 +246,35 @@
         .cal-day.other-month { color: #ccc; }
         .cal-day.empty { cursor: default; }
 
+        /* INFO SCROLL BUTTON */
+        .info-scroll-btn {
+            width: 100%; margin-top: 10px;
+            padding: 9px; background: linear-gradient(135deg, #fff0e0, #ffe0c0);
+            border: 2px solid #ffd0a0; border-radius: 50px;
+            color: #ff6a00; font-size: 12px; font-weight: 700;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .info-scroll-btn:hover { background: linear-gradient(135deg, #ffe0c0, #ffcfa0); border-color: #ff8c00; }
+
+        /* JADWAL TITLE LINK */
+        .card-title-link {
+            text-decoration: none;
+            display: flex; align-items: center; gap: 8px;
+            border-radius: 12px; padding: 6px 8px;
+            margin: -6px -8px 10px;
+            transition: background 0.2s, transform 0.15s;
+        }
+        .card-title-link:hover { background: #fff0e0; transform: translateX(3px); }
+        .title-arrow { font-size: 20px; color: #ff8c00; margin-left: auto; }
+
+        /* CALENDAR SUBTITLE */
+        .cal-subtitle {
+            font-size: 11px; font-weight: 700; color: #ff8c00;
+            text-transform: uppercase; letter-spacing: 1px;
+            margin-bottom: 10px; padding-bottom: 6px;
+            border-bottom: 2px dashed #ffd0a0;
+        }
+
         /* RIGHT COLUMN */
         .right-col { display: flex; flex-direction: column; gap: 20px; }
 
@@ -357,16 +386,26 @@
                             <span class="info-badge">INFO</span>
                             <span class="info-text">Upload nota bensin paling lambat setiap Jumat pukul 15.00 WIB.</span>
                         </div>
-                        <div class="info-item">
+                        <div class="info-item info-extra" style="display:none">
                             <span class="info-badge">INFO</span>
                             <span class="info-text">Pastikan nomor telepon sudah diperbarui di formulir yang tersedia.</span>
                         </div>
+                        <div class="info-item info-extra" style="display:none">
+                            <span class="info-badge">PENTING</span>
+                            <span class="info-text">Koordinasi dengan supervisor kecamatan wajib dilakukan sebelum turun lapangan.</span>
+                        </div>
+                        <div class="info-item info-extra" style="display:none">
+                            <span class="info-badge">PENTING</span>
+                            <span class="info-text">Absensi harian wajib diisi sebelum pukul 08.00 WIB setiap hari kerja.</span>
+                        </div>
                     </div>
+                    <button class="info-scroll-btn" id="infoScrollBtn" onclick="toggleInfoScroll()">▼ Lihat lebih banyak</button>
                 </div>
 
                 <!-- JADWAL KEGIATAN -->
                 <div class="card">
-                    <div class="card-title"><span>📅</span> Jadwal Kegiatan</div>
+                    <a href="jadwal.html" class="card-title card-title-link"><span>📅</span> Detail Jadwal Kegiatan <span class="title-arrow">›</span></a>
+                    <div class="cal-subtitle">Kalender Hari Ini</div>
                     <div class="calendar-header">
                         <button class="cal-nav" onclick="changeMonth(-1)">&#8249;</button>
                         <div class="cal-month" id="calMonth"></div>
@@ -397,6 +436,14 @@
         function logout() {
             sessionStorage.removeItem('currentUser');
             window.location.href = 'index.html';
+        }
+
+        function toggleInfoScroll() {
+            const extras = document.querySelectorAll('.info-extra');
+            const btn = document.getElementById('infoScrollBtn');
+            const isHidden = extras[0].style.display === 'none';
+            extras.forEach(el => el.style.display = isHidden ? 'flex' : 'none');
+            btn.textContent = isHidden ? '▲ Lihat lebih sedikit' : '▼ Lihat lebih banyak';
         }
 
         const monthNames = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
