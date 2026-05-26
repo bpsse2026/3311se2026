@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jadwal Kegiatan - Portal SE2026 BPS Sukoharjo</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ff6a00 0%, #fff0e0 50%, #ff8c00 100%);
+            background-size: 300% 300%;
+            animation: bgShift 8s ease infinite;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        @keyframes bgShift {
+            0%   { background-position: 0% 50%; }
+            50%  { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .bubbles {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none; z-index: 0; overflow: hidden;
+        }
+        .bubble {
+            position: absolute; bottom: -200px; border-radius: 50%;
+            background: rgba(255, 200, 50, 0.18);
+            animation: floatUp linear infinite;
+        }
+        .bubble:nth-child(1) { width:120px; height:120px; left:8%;  animation-duration:9s;  animation-delay:0s; }
+        .bubble:nth-child(2) { width:70px;  height:70px;  left:22%; animation-duration:7s;  animation-delay:1.5s; }
+        .bubble:nth-child(3) { width:180px; height:180px; left:45%; animation-duration:11s; animation-delay:3s; }
+        .bubble:nth-child(4) { width:90px;  height:90px;  left:63%; animation-duration:8s;  animation-delay:0.8s; }
+        .bubble:nth-child(5) { width:55px;  height:55px;  left:78%; animation-duration:6s;  animation-delay:2s; }
+        .bubble:nth-child(6) { width:140px; height:140px; left:88%; animation-duration:10s; animation-delay:4s; }
+        @keyframes floatUp {
+            0%   { transform: translateY(0) scale(1);        opacity: 0.6; }
+            50%  { transform: translateY(-50vh) scale(1.05); opacity: 0.4; }
+            100% { transform: translateY(-110vh) scale(1);   opacity: 0; }
+        }
+
+        .page-wrapper {
+            position: relative; z-index: 1;
+            min-height: 100vh;
+            display: flex; flex-direction: column; align-items: center;
+            padding: 24px 20px 40px;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            width: 100%; max-width: 1200px;
+            background: linear-gradient(135deg, #ff8c00 0%, #ff5500 100%);
+            padding: clamp(12px,2.5vw,18px) clamp(16px,4vw,36px);
+            display: flex; align-items: center; gap: 14px;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(255,80,0,0.3);
+            margin-bottom: 24px;
+        }
+        .navbar-logo {
+            width: clamp(40px,8vw,52px); height: clamp(40px,8vw,52px);
+            object-fit: cover; border-radius: 10px; flex-shrink: 0;
+        }
+        .navbar-text h1 {
+            font-size: clamp(13px,2.2vw,19px); font-weight: 900;
+            color: white; line-height: 1.2;
+        }
+        .navbar-text p {
+            font-size: clamp(10px,1.6vw,12px);
+            color: rgba(255,255,255,0.85); font-weight: 600; margin-top: 2px;
+        }
+        .navbar-right {
+            margin-left: auto;
+            display: flex; align-items: center; gap: 12px;
+        }
+        .btn-back {
+            padding: 9px 22px;
+            background: rgba(255,255,255,0.2); color: white;
+            font-size: 13px; font-weight: 700;
+            border: 1px solid rgba(255,255,255,0.35);
+            border-radius: 50px; cursor: pointer; text-decoration: none;
+            transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1),
+                        box-shadow 0.18s ease,
+                        border-radius 0.25s cubic-bezier(0.34,1.56,0.64,1),
+                        background 0.2s;
+            display: inline-flex; align-items: center; gap: 6px;
+        }
+        .btn-back:hover {
+            background: rgba(255,255,255,0.35); transform: scale(1.06);
+            border-radius: 18px; box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        }
+        .btn-back:active { transform: scale(0.93); border-radius: 50px; }
+
+        /* PAGE TITLE */
+        .page-title-row {
+            width: 100%; max-width: 1200px;
+            margin-bottom: 18px;
+            display: flex; align-items: center; gap: 12px;
+        }
+        .page-title-badge {
+            background: linear-gradient(135deg, #ff8c00, #ff5500);
+            color: white; font-size: 28px;
+            width: 54px; height: 54px;
+            border-radius: 16px;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 14px rgba(255,80,0,0.35);
+            flex-shrink: 0;
+        }
+        .page-title-text h2 {
+            font-size: clamp(18px,3vw,26px); font-weight: 900;
+            color: #fff; text-shadow: 0 2px 8px rgba(200,60,0,0.3);
+            line-height: 1.2;
+        }
+        .page-title-text p {
+            font-size: 12px; color: rgba(255,255,255,0.85);
+            font-weight: 600; margin-top: 2px;
+        }
+
+        /* CALENDAR CARD */
+        .card {
+            width: 100%; max-width: 1200px;
+            background: rgba(255,255,255,0.97);
+            border-radius: 20px;
+            padding: clamp(18px,3vw,28px);
+            box-shadow: 0 6px 28px rgba(0,0,0,0.12);
+        }
+        .card-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 16px; padding-bottom: 14px;
+            border-bottom: 2px dashed #ffd0a0;
+        }
+        .card-header-left {
+            display: flex; align-items: center; gap: 10px;
+        }
+        .card-header-title {
+            font-size: clamp(14px,2vw,17px); font-weight: 900; color: #ff4500;
+        }
+        .card-header-sub {
+            font-size: 11px; font-weight: 600; color: #ff9a40;
+            margin-top: 2px; letter-spacing: 0.5px;
+        }
+        .gcal-badge {
+            display: inline-flex; align-items: center; gap: 5px;
+            background: linear-gradient(135deg, #fff0e0, #ffe0c0);
+            border: 1.5px solid #ffd0a0;
+            border-radius: 50px;
+            padding: 5px 14px;
+            font-size: 11px; font-weight: 700; color: #ff6a00;
+        }
+
+        /* GOOGLE CALENDAR IFRAME */
+        .gcal-frame-wrap {
+            width: 100%;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 4px 18px rgba(255,100,0,0.12);
+            border: 2px solid #ffd0a0;
+            background: #fff8f0;
+        }
+        .gcal-frame-wrap iframe {
+            display: block;
+            width: 100%;
+            height: 680px;
+            border: none;
+        }
+
+        /* FOOTER NOTE */
+        .footer-note {
+            width: 100%; max-width: 1200px;
+            margin-top: 16px;
+            text-align: center;
+            font-size: 11px; font-weight: 600;
+            color: rgba(255,255,255,0.8);
+        }
+
+        @media (max-width: 768px) {
+            .gcal-frame-wrap iframe { height: 520px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="bubbles">
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+    <div class="bubble"></div>
+</div>
+
+<div class="page-wrapper">
+
+    <!-- NAVBAR -->
+    <div class="navbar">
+        <img src="logo.jpg" alt="Logo SE2026" class="navbar-logo">
+        <div class="navbar-text">
+            <h1>Portal Website SE2026</h1>
+            <p>BPS Kabupaten Sukoharjo</p>
+        </div>
+        <div class="navbar-right">
+            <a href="organik.html" class="btn-back">‹ Kembali</a>
+        </div>
+    </div>
+
+    <!-- PAGE TITLE -->
+    <div class="page-title-row">
+        <div class="page-title-badge">📅</div>
+        <div class="page-title-text">
+            <h2>Detail Jadwal Kegiatan</h2>
+            <p>Kalender resmi kegiatan BPS Kabupaten Sukoharjo — SE2026</p>
+        </div>
+    </div>
+
+    <!-- CALENDAR CARD -->
+    <div class="card">
+        <div class="card-header">
+            <div class="card-header-left">
+                <div>
+                    <div class="card-header-title">🗓️ Google Calendar BPS Sukoharjo</div>
+                    <div class="card-header-sub">bps.sukoharjo@gmail.com &nbsp;•&nbsp; Zona Waktu: WIB (UTC+7)</div>
+                </div>
+            </div>
+            <div class="gcal-badge">
+                <span>🔴</span> Live Calendar
+            </div>
+        </div>
+        <div class="gcal-frame-wrap">
+            <iframe
+                src="https://calendar.google.com/calendar/embed?src=bps.sukoharjo%40gmail.com&ctz=Asia%2FJakarta&showTitle=0&showNav=1&showDate=1&showPrint=0&showTabs=1&showCalendars=0&showTz=1&mode=MONTH"
+                frameborder="0"
+                scrolling="no"
+                allowfullscreen>
+            </iframe>
+        </div>
+    </div>
+
+    <div class="footer-note">Data kalender diambil langsung dari Google Calendar BPS Kabupaten Sukoharjo</div>
+
+</div>
+
+</body>
+</html>
