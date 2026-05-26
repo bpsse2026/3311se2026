@@ -245,6 +245,101 @@
         }
         .cal-day.other-month { color: #ccc; }
         .cal-day.empty { cursor: default; }
+        .cal-day.has-event { position: relative; }
+        .cal-day.has-event::after {
+            content: ''; position: absolute;
+            bottom: 2px; left: 50%; transform: translateX(-50%);
+            width: 5px; height: 5px; border-radius: 50%;
+            background: #ff5500;
+        }
+        .cal-day.today.has-event::after { background: white; }
+
+        /* DAY EVENT MODAL */
+        .day-modal-overlay {
+            display: none; position: fixed;
+            inset: 0; z-index: 999;
+            background: rgba(200,80,0,0.22);
+            backdrop-filter: blur(4px);
+            align-items: center; justify-content: center;
+        }
+        .day-modal-overlay.open { display: flex; }
+        .day-modal {
+            background: white; border-radius: 24px;
+            width: min(420px, 92vw);
+            padding: 28px 26px 22px;
+            box-shadow: 0 16px 48px rgba(255,80,0,0.22);
+            animation: modalPop 0.28s cubic-bezier(0.34,1.56,0.64,1) both;
+            position: relative;
+        }
+        @keyframes modalPop {
+            from { transform: scale(0.82) translateY(20px); opacity: 0; }
+            to   { transform: scale(1) translateY(0);       opacity: 1; }
+        }
+        .day-modal-close {
+            position: absolute; top: 14px; right: 16px;
+            background: #fff0e0; border: none;
+            width: 30px; height: 30px; border-radius: 50%;
+            font-size: 16px; color: #ff5500; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: background 0.2s, transform 0.15s;
+        }
+        .day-modal-close:hover { background: #ffd0a0; transform: scale(1.15); }
+        .day-modal-date {
+            font-size: 13px; font-weight: 700; color: #ff8c00;
+            text-transform: uppercase; letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+        .day-modal-title {
+            font-size: 22px; font-weight: 900; color: #ff4500;
+            margin-bottom: 16px; padding-bottom: 12px;
+            border-bottom: 2px dashed #ffd0a0;
+        }
+        .day-modal-events { display: flex; flex-direction: column; gap: 10px; }
+        .day-event-item {
+            display: flex; gap: 12px; align-items: flex-start;
+            background: linear-gradient(135deg, #fff8f0, #fff0e0);
+            border: 1.5px solid #ffd0a0; border-radius: 14px;
+            padding: 12px 14px;
+        }
+        .day-event-dot {
+            width: 10px; height: 10px; border-radius: 50%;
+            background: linear-gradient(135deg, #ff8c00, #ff5500);
+            flex-shrink: 0; margin-top: 4px;
+        }
+        .day-event-info { flex: 1; }
+        .day-event-time {
+            font-size: 11px; font-weight: 800; color: #ff8c00;
+            letter-spacing: 0.5px; margin-bottom: 2px;
+        }
+        .day-event-name {
+            font-size: 13px; font-weight: 700; color: #333; line-height: 1.35;
+        }
+        .day-event-loc {
+            font-size: 11px; color: #888; margin-top: 2px;
+        }
+        .day-modal-empty {
+            text-align: center; padding: 20px 0;
+            color: #ccc; font-size: 13px; font-weight: 600;
+        }
+        .day-modal-footer {
+            margin-top: 16px;
+            display: flex; justify-content: flex-end;
+        }
+        .btn-lihat-jadwal {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 9px 20px;
+            background: linear-gradient(135deg, #ff8c00, #ff5500);
+            color: white; font-size: 12px; font-weight: 800;
+            border-radius: 50px; text-decoration: none;
+            transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1),
+                        box-shadow 0.18s ease,
+                        border-radius 0.25s cubic-bezier(0.34,1.56,0.64,1);
+            box-shadow: 0 4px 14px rgba(255,80,0,0.3);
+        }
+        .btn-lihat-jadwal:hover {
+            transform: scale(1.06); border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(255,80,0,0.4);
+        }
 
         /* INFO SCROLL BUTTON */
         .info-scroll-btn {
@@ -426,6 +521,19 @@
         </div>
     </div>
 
+    <!-- DAY EVENT MODAL -->
+    <div class="day-modal-overlay" id="dayModalOverlay" onclick="closeDayModal(event)">
+        <div class="day-modal" id="dayModal">
+            <button class="day-modal-close" onclick="closeDayModal(null, true)">✕</button>
+            <div class="day-modal-date" id="modalDateLabel"></div>
+            <div class="day-modal-title" id="modalDayTitle"></div>
+            <div class="day-modal-events" id="modalEventsList"></div>
+            <div class="day-modal-footer">
+                <a href="jadwal.html" class="btn-lihat-jadwal">📅 Lihat Kalender Lengkap ›</a>
+            </div>
+        </div>
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const user = sessionStorage.getItem('currentUser') || 'ORGANIK3311';
@@ -458,6 +566,46 @@
             renderCalendar(viewYear, viewMonth);
         }
 
+        const jadwalEvents = {
+            '2026-05-26': [
+                { time: '08.00 – 10.00', name: 'Briefing Petugas Lapangan Gelombang 2', loc: 'Aula BPS Kab. Sukoharjo' },
+                { time: '13.00 – 15.00', name: 'Sesi Pendalaman Materi GoJags', loc: 'Online / Zoom' }
+            ],
+            '2026-05-27': [
+                { time: '08.00 – 12.00', name: 'Pelatihan Petugas – Gelombang 2 Hari 1', loc: 'BPS Kab. Sukoharjo' }
+            ],
+            '2026-05-28': [
+                { time: '08.00 – 12.00', name: 'Pelatihan Petugas – Gelombang 2 Hari 2', loc: 'BPS Kab. Sukoharjo' },
+                { time: '14.00 – 15.00', name: 'Pengumpulan Pretest Peserta', loc: 'Google Forms' }
+            ],
+            '2026-05-29': [
+                { time: '08.00 – 12.00', name: 'Pelatihan Petugas – Gelombang 2 Hari 3', loc: 'BPS Kab. Sukoharjo' }
+            ],
+            '2026-06-01': [
+                { time: '08.00 – 17.00', name: 'Pelaksanaan Lapangan SE2026 Dimulai', loc: 'Seluruh Kecamatan' }
+            ],
+            '2026-06-05': [
+                { time: '09.00 – 11.00', name: 'Monitoring Lapangan Minggu 1', loc: 'Koordinasi Kecamatan' },
+                { time: '15.00', name: 'Batas Upload Nota Bensin', loc: 'Google Drive' }
+            ],
+            '2026-06-12': [
+                { time: '15.00', name: 'Batas Upload Nota Bensin', loc: 'Google Drive' }
+            ],
+            '2026-06-19': [
+                { time: '15.00', name: 'Batas Upload Nota Bensin', loc: 'Google Drive' }
+            ],
+            '2026-06-26': [
+                { time: '08.00 – 12.00', name: 'Evaluasi Progres Lapangan', loc: 'Aula BPS Kab. Sukoharjo' },
+                { time: '15.00', name: 'Batas Upload Nota Bensin', loc: 'Google Drive' }
+            ]
+        };
+
+        const dayNames = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+
+        function dateKey(year, month, day) {
+            return year + '-' + String(month + 1).padStart(2,'0') + '-' + String(day).padStart(2,'0');
+        }
+
         function renderCalendar(year, month) {
             document.getElementById('calMonth').textContent = monthNames[month] + ' ' + year;
             const grid = document.getElementById('calGrid');
@@ -481,9 +629,51 @@
                 if (d === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
                     cell.classList.add('today');
                 }
+                const key = dateKey(year, month, d);
+                if (jadwalEvents[key]) cell.classList.add('has-event');
+                cell.addEventListener('click', () => showDayEvents(d, month, year));
                 grid.appendChild(cell);
             }
         }
+
+        function showDayEvents(d, month, year) {
+            const key = dateKey(year, month, d);
+            const date = new Date(year, month, d);
+            const dayLabel = dayNames[date.getDay()];
+            document.getElementById('modalDateLabel').textContent =
+                dayLabel + ', ' + d + ' ' + monthNames[month] + ' ' + year;
+            document.getElementById('modalDayTitle').textContent = '📋 Agenda Hari Ini';
+
+            const list = document.getElementById('modalEventsList');
+            list.innerHTML = '';
+            const events = jadwalEvents[key];
+            if (events && events.length > 0) {
+                events.forEach(ev => {
+                    list.innerHTML += `
+                        <div class="day-event-item">
+                            <div class="day-event-dot"></div>
+                            <div class="day-event-info">
+                                <div class="day-event-time">🕐 ${ev.time}</div>
+                                <div class="day-event-name">${ev.name}</div>
+                                ${ev.loc ? `<div class="day-event-loc">📍 ${ev.loc}</div>` : ''}
+                            </div>
+                        </div>`;
+                });
+            } else {
+                list.innerHTML = '<div class="day-modal-empty">🗓️ Tidak ada agenda untuk hari ini</div>';
+            }
+            document.getElementById('dayModalOverlay').classList.add('open');
+        }
+
+        function closeDayModal(event, force) {
+            if (force || (event && event.target === document.getElementById('dayModalOverlay'))) {
+                document.getElementById('dayModalOverlay').classList.remove('open');
+            }
+        }
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeDayModal(null, true);
+        });
     </script>
 </body>
 </html>
