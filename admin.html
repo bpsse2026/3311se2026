@@ -317,6 +317,10 @@
         <div class="login-sub">Masukkan password admin untuk melanjutkan</div>
         <label class="form-label" style="display:block;text-align:left;margin-bottom:4px;font-size:11px;font-weight:800;color:#ff8c00;letter-spacing:0.5px;">PASSWORD ADMIN</label>
         <input type="password" class="login-input" id="adminPassInput" placeholder="••••••••" style="margin-bottom:10px;">
+        <div id="tokenFieldWrap" style="display:none;">
+            <label class="form-label" style="display:block;text-align:left;margin-bottom:4px;font-size:11px;font-weight:800;color:#ff8c00;letter-spacing:0.5px;">GITHUB TOKEN</label>
+            <input type="password" class="login-input" id="ghTokenInput" placeholder="ghp_..." style="letter-spacing:1px;margin-bottom:10px;">
+        </div>
         <div class="login-error" id="loginError"></div>
         <button class="login-btn" id="loginBtn" onclick="doLogin()">🔓 Masuk</button>
     </div>
@@ -499,16 +503,36 @@
         if (res.ok) fileSha = j.sha || '';
     }
 
+    let serverHasToken = false;
+
+    async function detectEnvironment() {
+        try {
+            const res = await fetch('/api/token');
+            const ct  = res.headers.get('content-type') || '';
+            if (res.ok && ct.includes('application/json')) {
+                const data = await res.json();
+                if (data.token) { serverHasToken = true; return; }
+            }
+        } catch(e) {}
+        serverHasToken = false;
+        document.getElementById('tokenFieldWrap').style.display = 'block';
+    }
+
     async function doLogin() {
         const pass = document.getElementById('adminPassInput').value;
         document.getElementById('loginError').style.display = 'none';
         if (pass !== ADMIN_PASS) { showErr('❌ Password salah. Coba lagi.'); return; }
         setLoading(true);
         try {
-            const res = await fetch('/api/token');
-            const data = await res.json();
-            if (!data.token) throw new Error('GitHub Token belum dikonfigurasi di server.');
-            ghToken = data.token;
+            if (serverHasToken) {
+                const res  = await fetch('/api/token');
+                const data = await res.json();
+                ghToken = data.token;
+            } else {
+                const manual = document.getElementById('ghTokenInput').value.trim();
+                if (!manual) { showErr('⚠️ GitHub Token wajib diisi.'); setLoading(false); return; }
+                ghToken = manual;
+            }
             await getFileSha();
             eventsData = await fetchFromGitHub();
             document.getElementById('loginGate').style.display   = 'none';
@@ -528,6 +552,8 @@
         document.getElementById('loginGate').style.display   = 'block';
         document.getElementById('logoutBtn').style.display   = 'none';
         document.getElementById('adminPassInput').value = '';
+        const tf = document.getElementById('ghTokenInput');
+        if (tf) tf.value = '';
         ghToken = ''; eventsData = {}; fileSha = '';
     }
 
@@ -702,6 +728,7 @@
     }
 
     document.getElementById('adminPassInput').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+    detectEnvironment();
 </script>
 </body>
 </html>
