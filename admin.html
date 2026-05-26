@@ -291,17 +291,11 @@
     <div id="loginGate">
         <div class="login-icon">🔐</div>
         <div class="login-title">Admin Panel</div>
-        <div class="login-sub">Perubahan disimpan langsung ke GitHub — berlaku di semua perangkat</div>
+        <div class="login-sub">Masukkan password admin untuk melanjutkan</div>
         <label class="form-label" style="display:block;text-align:left;margin-bottom:4px;font-size:11px;font-weight:800;color:#ff8c00;letter-spacing:0.5px;">PASSWORD ADMIN</label>
         <input type="password" class="login-input" id="adminPassInput" placeholder="••••••••" style="margin-bottom:10px;">
-        <label class="form-label" style="display:block;text-align:left;margin-bottom:4px;font-size:11px;font-weight:800;color:#ff8c00;letter-spacing:0.5px;">GITHUB TOKEN <span style="color:#bbb;font-weight:600;">(classic token, bukan fine-grained)</span></label>
-        <input type="password" class="login-input" id="ghTokenInput" placeholder="ghp_..." style="letter-spacing:1px;margin-bottom:6px;">
-        <div style="background:#fff8f0;border:1.5px solid #ffd0a0;border-radius:10px;padding:10px 12px;margin-bottom:12px;text-align:left;">
-            <div style="font-size:11px;font-weight:800;color:#ff6a00;margin-bottom:4px;">⚠️ Gunakan Classic Token</div>
-            <div style="font-size:11px;color:#888;line-height:1.5;">Buka <a href="https://github.com/settings/tokens/new" target="_blank" style="color:#ff6a00;font-weight:700;">github.com/settings/tokens/new</a> → pilih <b>Classic</b> → centang <b>repo</b> → Generate → paste di sini.</div>
-        </div>
         <div class="login-error" id="loginError"></div>
-        <button class="login-btn" id="loginBtn" onclick="doLogin()">🔓 Masuk & Muat Data</button>
+        <button class="login-btn" id="loginBtn" onclick="doLogin()">🔓 Masuk</button>
     </div>
 
     <!-- ADMIN PANEL -->
@@ -392,7 +386,7 @@
     }
     function setLoading(on) {
         document.getElementById('loginBtn').disabled = on;
-        document.getElementById('loginBtn').textContent = on ? '⏳ Memuat...' : '🔓 Masuk & Muat Data';
+        document.getElementById('loginBtn').textContent = on ? '⏳ Memuat...' : '🔓 Masuk';
     }
     function showErr(msg) {
         const e = document.getElementById('loginError');
@@ -449,14 +443,15 @@
     }
 
     async function doLogin() {
-        const pass  = document.getElementById('adminPassInput').value;
-        const token = document.getElementById('ghTokenInput').value.trim();
+        const pass = document.getElementById('adminPassInput').value;
         document.getElementById('loginError').style.display = 'none';
         if (pass !== ADMIN_PASS) { showErr('❌ Password salah. Coba lagi.'); return; }
-        if (!token) { showErr('⚠️ GitHub Token wajib diisi untuk sinkronisasi.'); return; }
-        ghToken = token;
         setLoading(true);
         try {
+            const res = await fetch('/api/token');
+            const data = await res.json();
+            if (!data.token) throw new Error('GitHub Token belum dikonfigurasi di server.');
+            ghToken = data.token;
             await getFileSha();
             eventsData = await fetchFromGitHub();
             document.getElementById('loginGate').style.display   = 'none';
