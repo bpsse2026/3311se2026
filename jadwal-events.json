@@ -1,4 +1,11 @@
 {
+  "2026-05-29": [
+    {
+      "time": "08.00 - 12.00",
+      "name": "Pengumuman Petugas SE2026",
+      "loc": "BPS Kab. Sukoharjo"
+    }
+  ],
   "2026-06-01": [
     {
       "time": "08.00 - 17.00",
@@ -42,6 +49,13 @@
       "time": "15.00",
       "name": "Batas Upload Nota Bensin",
       "loc": "Google Drive"
+    }
+  ],
+  "2026-05-30": [
+    {
+      "time": "07.00 - 18.00",
+      "name": "Pendalaman Materi Pendataan SE2026 (MOOC) Gelombang 1",
+      "loc": "Web Gojags"
     }
   ]
 }
