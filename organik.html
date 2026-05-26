@@ -162,9 +162,24 @@
         }
 
         /* LACI SAKU */
+        .laci-wrapper { position: relative; }
+        .laci-scroll-btn {
+            display: flex; align-items: center; justify-content: center;
+            width: 100%; padding: 6px 0; cursor: pointer;
+            background: linear-gradient(135deg, #fff4e6, #ffe8cc);
+            border: 2px solid #ffd0a0; border-radius: 12px;
+            color: #ff8c00; font-size: 18px; font-weight: 700;
+            transition: background 0.18s, box-shadow 0.18s;
+            user-select: none;
+        }
+        .laci-scroll-btn:hover { background: linear-gradient(135deg,#ffe0b2,#ffcc80); box-shadow: 0 4px 12px rgba(255,140,0,0.2); }
+        .laci-scroll-btn:active { transform: scale(0.97); }
+        .laci-scroll-btn.hidden { opacity: 0; pointer-events: none; }
+        .laci-scroll-btn.top { margin-bottom: 8px; }
+        .laci-scroll-btn.bottom { margin-top: 8px; }
         .laci-list {
             display: flex; flex-direction: column; gap: 10px;
-            margin-top: 4px;
+            margin-top: 4px; overflow: hidden;
         }
         .laci-item {
             display: flex; align-items: center; gap: 14px;
@@ -477,22 +492,36 @@
                 <!-- LACI SAKU -->
                 <div class="card">
                     <div class="card-title"><span>👜</span> Laci Saku</div>
-                    <div class="laci-list">
-                        <a href="#" class="laci-item" target="_blank">
-                            <div class="laci-dot"></div>
-                            <div class="laci-text">Daftar Petugas &amp; Kelas</div>
-                            <div class="laci-arrow">›</div>
-                        </a>
-                        <a href="#" class="laci-item" target="_blank">
-                            <div class="laci-dot"></div>
-                            <div class="laci-text">Upload Nota Bensin</div>
-                            <div class="laci-arrow">›</div>
-                        </a>
-                        <a href="#" class="laci-item" target="_blank">
-                            <div class="laci-dot"></div>
-                            <div class="laci-text">Form Nomor Telepon</div>
-                            <div class="laci-arrow">›</div>
-                        </a>
+                    <div class="laci-wrapper">
+                        <div class="laci-scroll-btn top hidden" id="laciUp" onclick="laciScroll(-1)">▲</div>
+                        <div class="laci-list" id="laciList">
+                            <a href="#" class="laci-item" target="_blank">
+                                <div class="laci-dot"></div>
+                                <div class="laci-text">Daftar Petugas &amp; Kelas</div>
+                                <div class="laci-arrow">›</div>
+                            </a>
+                            <a href="#" class="laci-item" target="_blank">
+                                <div class="laci-dot"></div>
+                                <div class="laci-text">Upload Nota Bensin</div>
+                                <div class="laci-arrow">›</div>
+                            </a>
+                            <a href="#" class="laci-item" target="_blank">
+                                <div class="laci-dot"></div>
+                                <div class="laci-text">Form Nomor Telepon</div>
+                                <div class="laci-arrow">›</div>
+                            </a>
+                            <a href="#" class="laci-item" target="_blank">
+                                <div class="laci-dot"></div>
+                                <div class="laci-text">Rekap Harian Petugas</div>
+                                <div class="laci-arrow">›</div>
+                            </a>
+                            <a href="#" class="laci-item" target="_blank">
+                                <div class="laci-dot"></div>
+                                <div class="laci-text">Laporan Progres Pendataan</div>
+                                <div class="laci-arrow">›</div>
+                            </a>
+                        </div>
+                        <div class="laci-scroll-btn bottom" id="laciDown" onclick="laciScroll(1)">▼</div>
                     </div>
                 </div>
 
@@ -729,6 +758,29 @@
         document.addEventListener('keydown', e => {
             if (e.key === 'Escape') closeDayModal(null, true);
         });
+
+        const LACI_VISIBLE = 3;
+        let laciOffset = 0;
+
+        function laciRender() {
+            const list = document.getElementById('laciList');
+            const items = list.querySelectorAll('.laci-item');
+            const total = items.length;
+            items.forEach((el, i) => {
+                el.style.display = (i >= laciOffset && i < laciOffset + LACI_VISIBLE) ? 'flex' : 'none';
+            });
+            document.getElementById('laciUp').classList.toggle('hidden', laciOffset === 0);
+            document.getElementById('laciDown').classList.toggle('hidden', laciOffset + LACI_VISIBLE >= total);
+        }
+
+        function laciScroll(dir) {
+            const list = document.getElementById('laciList');
+            const total = list.querySelectorAll('.laci-item').length;
+            laciOffset = Math.max(0, Math.min(laciOffset + dir, total - LACI_VISIBLE));
+            laciRender();
+        }
+
+        laciRender();
     </script>
 </body>
 </html>
