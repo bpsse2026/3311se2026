@@ -241,6 +241,29 @@
         /* EMPTY STATE */
         .empty-state { text-align: center; padding: 32px; color: #ccc; font-size: 14px; font-weight: 600; }
 
+        /* SAVE BAR */
+        .save-bar {
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 14px; flex-wrap: wrap;
+        }
+        .unsaved-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: #fff8e0; border: 1.5px solid #ffd060; border-radius: 50px;
+            padding: 6px 14px; font-size: 12px; font-weight: 800; color: #b8860b;
+        }
+        .unsaved-badge.hidden { display: none; }
+        .btn-save-gh {
+            padding: 12px 28px;
+            background: linear-gradient(135deg, #27ae60, #1e8449);
+            color: white; font-size: 14px; font-weight: 800;
+            border: none; border-radius: 50px; cursor: pointer;
+            box-shadow: 0 4px 16px rgba(39,174,96,0.35);
+            transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.18s, opacity 0.2s;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .btn-save-gh:hover { transform: scale(1.05); box-shadow: 0 8px 24px rgba(39,174,96,0.45); }
+        .btn-save-gh:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
         /* DANGER ZONE */
         .danger-zone {
             display: flex; align-items: center; justify-content: space-between;
@@ -345,6 +368,22 @@
             <div class="events-list" id="eventsList"></div>
         </div>
 
+        <!-- SAVE TO GITHUB -->
+        <div class="card" style="padding:20px 24px;">
+            <div class="save-bar">
+                <div>
+                    <div style="font-size:15px;font-weight:900;color:#27ae60;margin-bottom:4px;">☁️ Simpan ke GitHub</div>
+                    <div style="font-size:11px;color:#888;font-weight:600;">Tekan tombol ini agar perubahan berlaku di semua perangkat</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+                    <span class="unsaved-badge hidden" id="unsavedBadge">⚠️ Ada perubahan belum disimpan</span>
+                    <button class="btn-save-gh" id="saveGhBtn" onclick="saveToGitHub()">
+                        💾 Simpan ke GitHub
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <!-- DANGER ZONE -->
         <div class="card" style="padding:20px 24px;">
             <div class="card-title" style="color:#c0392b; margin-bottom:14px;">⚠️ Zona Berbahaya</div>
@@ -377,6 +416,16 @@
     let ghToken   = '';
     let eventsData = {};
     let fileSha   = '';
+    let isDirty   = false;
+
+    function markDirty() {
+        isDirty = true;
+        document.getElementById('unsavedBadge').classList.remove('hidden');
+    }
+    function markClean() {
+        isDirty = false;
+        document.getElementById('unsavedBadge').classList.add('hidden');
+    }
 
     function showToast(msg, dur = 2800) {
         const t = document.getElementById('toast');
@@ -471,22 +520,26 @@
         document.getElementById('loginGate').style.display   = 'block';
         document.getElementById('logoutBtn').style.display   = 'none';
         document.getElementById('adminPassInput').value = '';
-        document.getElementById('ghTokenInput').value   = '';
         ghToken = ''; eventsData = {}; fileSha = '';
     }
 
-    async function saveAndPush(successMsg) {
+    async function saveToGitHub() {
+        const btn = document.getElementById('saveGhBtn');
+        btn.disabled = true;
+        btn.textContent = '⏳ Menyimpan...';
         try {
-            showToast('⏳ Menyimpan ke GitHub...');
             await pushToGitHub(eventsData);
-            renderList();
-            showToast(successMsg);
+            markClean();
+            showToast('✅ Berhasil disimpan ke GitHub! Perubahan aktif di semua perangkat.');
         } catch(err) {
-            showToast('❌ Gagal simpan: ' + err.message, 4000);
+            showToast('❌ Gagal simpan ke GitHub: ' + err.message, 5000);
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '💾 Simpan ke GitHub';
         }
     }
 
-    async function addEvent() {
+    function addEvent() {
         const date = document.getElementById('fDate').value;
         const time = document.getElementById('fTime').value.trim();
         const name = document.getElementById('fName').value.trim();
@@ -497,14 +550,18 @@
         document.getElementById('fTime').value = '';
         document.getElementById('fName').value = '';
         document.getElementById('fLoc').value  = '';
-        await saveAndPush('✅ Agenda ditambahkan & disimpan ke GitHub!');
+        markDirty();
+        renderList();
+        showToast('➕ Agenda ditambahkan. Tekan "Simpan ke GitHub" untuk menyimpan.');
     }
 
-    async function deleteEvent(date, idx) {
-        if (!confirm('Hapus agenda ini dari GitHub?')) return;
+    function deleteEvent(date, idx) {
+        if (!confirm('Hapus agenda ini?')) return;
         eventsData[date].splice(idx, 1);
         if (eventsData[date].length === 0) delete eventsData[date];
-        await saveAndPush('🗑️ Agenda dihapus dari GitHub.');
+        markDirty();
+        renderList();
+        showToast('🗑️ Agenda dihapus. Tekan "Simpan ke GitHub" untuk menyimpan.');
     }
 
     function startEdit(date, idx) {
@@ -524,17 +581,19 @@
             </div>`;
     }
 
-    async function saveEdit(date, idx) {
+    function saveEdit(date, idx) {
         const time = document.getElementById(`et-${date}-${idx}`).value.trim();
         const name = document.getElementById(`en-${date}-${idx}`).value.trim();
         const loc  = document.getElementById(`el-${date}-${idx}`).value.trim();
         if (!name) { showToast('⚠️ Nama kegiatan tidak boleh kosong!'); return; }
         eventsData[date][idx] = { time, name, loc };
-        await saveAndPush('✏️ Agenda diperbarui & disimpan ke GitHub!');
+        markDirty();
+        renderList();
+        showToast('✏️ Agenda diperbarui. Tekan "Simpan ke GitHub" untuk menyimpan.');
     }
 
-    async function resetToDefault() {
-        if (!confirm('Reset semua data ke default dan simpan ke GitHub?')) return;
+    function resetToDefault() {
+        if (!confirm('Reset semua data ke default? Tekan "Simpan ke GitHub" setelahnya untuk menyimpan.')) return;
         eventsData = {
             '2026-05-26': [
                 { time: '08.00 - 10.00', name: 'Briefing Petugas Lapangan Gelombang 2', loc: 'Aula BPS Kab. Sukoharjo' },
@@ -558,7 +617,9 @@
                 { time: '15.00', name: 'Batas Upload Nota Bensin', loc: 'Google Drive' }
             ]
         };
-        await saveAndPush('🔄 Data direset dan disimpan ke GitHub!');
+        markDirty();
+        renderList();
+        showToast('🔄 Data direset. Tekan "Simpan ke GitHub" untuk menyimpan.');
     }
 
     function renderList() {
