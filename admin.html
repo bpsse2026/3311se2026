@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Jadwal – Portal SE2026</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ff6a00 0%, #fff0e0 50%, #ff8c00 100%);
+            background-size: 300% 300%;
+            animation: bgShift 8s ease infinite;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        @keyframes bgShift {
+            0%   { background-position: 0% 50%; }
+            50%  { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .bubbles { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+        .bubble {
+            position: absolute; bottom: -200px; border-radius: 50%;
+            background: rgba(255,200,50,0.15); animation: floatUp linear infinite;
+        }
+        .bubble:nth-child(1) { width:100px; height:100px; left:5%;  animation-duration:9s;  animation-delay:0s; }
+        .bubble:nth-child(2) { width:60px;  height:60px;  left:20%; animation-duration:7s;  animation-delay:1.5s; }
+        .bubble:nth-child(3) { width:160px; height:160px; left:45%; animation-duration:11s; animation-delay:3s; }
+        .bubble:nth-child(4) { width:80px;  height:80px;  left:65%; animation-duration:8s;  animation-delay:0.8s; }
+        .bubble:nth-child(5) { width:50px;  height:50px;  left:80%; animation-duration:6s;  animation-delay:2s; }
+        @keyframes floatUp {
+            0%   { transform: translateY(0) scale(1);        opacity: 0.5; }
+            50%  { transform: translateY(-50vh) scale(1.05); opacity: 0.3; }
+            100% { transform: translateY(-110vh) scale(1);   opacity: 0; }
+        }
+
+        .page-wrapper {
+            position: relative; z-index: 1;
+            min-height: 100vh;
+            display: flex; flex-direction: column; align-items: center;
+            padding: 24px 20px 60px;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            width: 100%; max-width: 900px;
+            background: linear-gradient(135deg, #ff8c00 0%, #ff5500 100%);
+            padding: 14px 28px;
+            display: flex; align-items: center; gap: 14px;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(255,80,0,0.3);
+            margin-bottom: 24px;
+        }
+        .navbar-logo { width: 46px; height: 46px; object-fit: cover; border-radius: 10px; flex-shrink: 0; }
+        .navbar-text h1 { font-size: 17px; font-weight: 900; color: white; line-height: 1.2; }
+        .navbar-text p  { font-size: 11px; color: rgba(255,255,255,0.85); font-weight: 600; margin-top: 2px; }
+        .navbar-right   { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+        .nav-btn {
+            padding: 8px 18px;
+            background: rgba(255,255,255,0.2); color: white;
+            font-size: 12px; font-weight: 700;
+            border: 1px solid rgba(255,255,255,0.35);
+            border-radius: 50px; cursor: pointer; text-decoration: none;
+            transition: background 0.2s, transform 0.15s cubic-bezier(0.34,1.56,0.64,1);
+            display: inline-flex; align-items: center; gap: 5px;
+        }
+        .nav-btn:hover { background: rgba(255,255,255,0.35); transform: scale(1.06); }
+
+        /* LOGIN GATE */
+        #loginGate {
+            width: 100%; max-width: 400px;
+            background: rgba(255,255,255,0.97);
+            border-radius: 24px;
+            padding: 36px 32px;
+            box-shadow: 0 10px 40px rgba(255,80,0,0.2);
+            text-align: center;
+        }
+        .login-icon { font-size: 44px; margin-bottom: 12px; }
+        .login-title { font-size: 22px; font-weight: 900; color: #ff4500; margin-bottom: 6px; }
+        .login-sub   { font-size: 12px; color: #aaa; font-weight: 600; margin-bottom: 24px; }
+        .login-input {
+            width: 100%; padding: 12px 16px;
+            border: 2px solid #ffd0a0; border-radius: 12px;
+            font-size: 15px; font-weight: 700;
+            color: #333; outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            text-align: center; letter-spacing: 3px;
+            margin-bottom: 14px;
+        }
+        .login-input:focus { border-color: #ff8c00; box-shadow: 0 0 0 3px rgba(255,140,0,0.15); }
+        .login-btn {
+            width: 100%; padding: 13px;
+            background: linear-gradient(135deg, #ff8c00, #ff5500);
+            color: white; font-size: 14px; font-weight: 800;
+            border: none; border-radius: 50px; cursor: pointer;
+            box-shadow: 0 4px 16px rgba(255,80,0,0.3);
+            transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.18s;
+        }
+        .login-btn:hover { transform: scale(1.04); box-shadow: 0 8px 24px rgba(255,80,0,0.4); }
+        .login-error {
+            color: #e53e3e; font-size: 12px; font-weight: 700;
+            margin-top: -8px; margin-bottom: 10px; display: none;
+        }
+
+        /* ADMIN PANEL */
+        #adminPanel { display: none; width: 100%; max-width: 900px; }
+
+        /* PAGE TITLE */
+        .page-title-row {
+            display: flex; align-items: center; gap: 12px;
+            margin-bottom: 20px;
+        }
+        .page-title-badge {
+            background: linear-gradient(135deg, #ff8c00, #ff5500);
+            color: white; font-size: 26px;
+            width: 50px; height: 50px; border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 14px rgba(255,80,0,0.35); flex-shrink: 0;
+        }
+        .page-title-text h2 { font-size: 22px; font-weight: 900; color: white; text-shadow: 0 2px 8px rgba(200,60,0,0.3); }
+        .page-title-text p  { font-size: 11px; color: rgba(255,255,255,0.85); font-weight: 600; margin-top: 2px; }
+
+        /* CARDS */
+        .card {
+            background: rgba(255,255,255,0.97);
+            border-radius: 20px;
+            padding: 26px 28px;
+            box-shadow: 0 6px 28px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .card-title {
+            font-size: 16px; font-weight: 900; color: #ff4500;
+            margin-bottom: 18px; display: flex; align-items: center; gap: 8px;
+        }
+
+        /* ADD FORM */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 160px 130px 1fr 1fr;
+            gap: 10px; align-items: end;
+        }
+        .form-group { display: flex; flex-direction: column; gap: 5px; }
+        .form-label { font-size: 11px; font-weight: 800; color: #ff8c00; text-transform: uppercase; letter-spacing: 0.5px; }
+        .form-input {
+            padding: 10px 12px;
+            border: 2px solid #ffd0a0; border-radius: 10px;
+            font-size: 13px; font-weight: 600; color: #333;
+            outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+            width: 100%;
+        }
+        .form-input:focus { border-color: #ff8c00; box-shadow: 0 0 0 3px rgba(255,140,0,0.15); }
+        .btn-add {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #ff8c00, #ff5500);
+            color: white; font-size: 13px; font-weight: 800;
+            border: none; border-radius: 10px; cursor: pointer;
+            box-shadow: 0 4px 14px rgba(255,80,0,0.25);
+            transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.18s;
+            white-space: nowrap; height: 40px;
+        }
+        .btn-add:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(255,80,0,0.35); }
+        .form-hint { font-size: 11px; color: #aaa; margin-top: 8px; }
+
+        /* TOAST */
+        .toast {
+            position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px);
+            background: linear-gradient(135deg, #ff8c00, #ff5500);
+            color: white; font-size: 13px; font-weight: 700;
+            padding: 12px 28px; border-radius: 50px;
+            box-shadow: 0 6px 24px rgba(255,80,0,0.4);
+            z-index: 9999;
+            transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s;
+            opacity: 0; pointer-events: none;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+        /* EVENTS LIST */
+        .events-list { display: flex; flex-direction: column; gap: 14px; }
+        .date-group {}
+        .date-group-header {
+            display: flex; align-items: center; justify-content: space-between;
+            background: linear-gradient(135deg, #fff0e0, #ffe8d0);
+            border: 1.5px solid #ffd0a0;
+            border-radius: 12px 12px 0 0;
+            padding: 10px 16px;
+        }
+        .date-group-label {
+            font-size: 13px; font-weight: 900; color: #ff4500;
+        }
+        .date-group-count {
+            font-size: 11px; font-weight: 700; color: #ff8c00;
+            background: white; padding: 2px 10px; border-radius: 50px;
+            border: 1px solid #ffd0a0;
+        }
+        .date-group-events { border: 1.5px solid #ffd0a0; border-top: none; border-radius: 0 0 12px 12px; overflow: hidden; }
+        .event-row {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 14px;
+            border-bottom: 1px solid #fff0e0;
+            transition: background 0.15s;
+        }
+        .event-row:last-child { border-bottom: none; }
+        .event-row:hover { background: #fffaf5; }
+        .event-dot { width: 8px; height: 8px; border-radius: 50%; background: linear-gradient(135deg,#ff8c00,#ff5500); flex-shrink: 0; }
+        .event-row-info { flex: 1; min-width: 0; }
+        .event-row-time { font-size: 11px; font-weight: 800; color: #ff8c00; }
+        .event-row-name { font-size: 13px; font-weight: 700; color: #333; }
+        .event-row-loc  { font-size: 11px; color: #999; }
+        .event-row-actions { display: flex; gap: 6px; flex-shrink: 0; }
+        .btn-edit, .btn-del {
+            padding: 5px 12px; border-radius: 8px; font-size: 11px; font-weight: 700;
+            cursor: pointer; border: none; transition: transform 0.15s, opacity 0.15s;
+        }
+        .btn-edit { background: #fff0e0; color: #ff6a00; border: 1px solid #ffd0a0; }
+        .btn-edit:hover { background: #ffe0c0; transform: scale(1.05); }
+        .btn-del  { background: #fff0f0; color: #e53e3e; border: 1px solid #ffc0c0; }
+        .btn-del:hover  { background: #ffe0e0; transform: scale(1.05); }
+
+        /* INLINE EDIT */
+        .event-row.editing { background: #fffaf5; flex-wrap: wrap; gap: 8px; }
+        .edit-grid {
+            display: flex; gap: 6px; align-items: center; flex: 1; flex-wrap: wrap;
+        }
+        .edit-input {
+            padding: 6px 10px; border: 2px solid #ffd0a0; border-radius: 8px;
+            font-size: 12px; font-weight: 600; color: #333; outline: none;
+            transition: border-color 0.2s;
+        }
+        .edit-input:focus { border-color: #ff8c00; }
+        .edit-input.ei-time { width: 110px; }
+        .edit-input.ei-name { flex: 1; min-width: 140px; }
+        .edit-input.ei-loc  { flex: 1; min-width: 120px; }
+        .btn-save { background: #e6ffe6; color: #27ae60; border: 1px solid #a0e0a0; }
+        .btn-save:hover { background: #c0ffc0; transform: scale(1.05); }
+        .btn-cancel { background: #f5f5f5; color: #888; border: 1px solid #ddd; }
+        .btn-cancel:hover { background: #eee; transform: scale(1.05); }
+
+        /* EMPTY STATE */
+        .empty-state { text-align: center; padding: 32px; color: #ccc; font-size: 14px; font-weight: 600; }
+
+        /* DANGER ZONE */
+        .danger-zone {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 14px 18px;
+            background: #fff8f8; border: 1.5px solid #ffc0c0; border-radius: 14px;
+        }
+        .danger-label { font-size: 13px; font-weight: 700; color: #c0392b; }
+        .danger-sub   { font-size: 11px; color: #e88; font-weight: 600; margin-top: 2px; }
+        .btn-reset {
+            padding: 9px 20px;
+            background: white; color: #c0392b;
+            font-size: 12px; font-weight: 800;
+            border: 2px solid #ffc0c0; border-radius: 50px; cursor: pointer;
+            transition: background 0.2s, transform 0.15s;
+        }
+        .btn-reset:hover { background: #fff0f0; transform: scale(1.04); }
+
+        @media (max-width: 700px) {
+            .form-grid { grid-template-columns: 1fr 1fr; }
+            .form-grid .btn-add { grid-column: 1/-1; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="bubbles">
+    <div class="bubble"></div><div class="bubble"></div>
+    <div class="bubble"></div><div class="bubble"></div>
+    <div class="bubble"></div>
+</div>
+
+<div class="page-wrapper">
+
+    <!-- NAVBAR -->
+    <div class="navbar">
+        <img src="logo.jpg" alt="Logo" class="navbar-logo">
+        <div class="navbar-text">
+            <h1>Portal Website SE2026</h1>
+            <p>BPS Kabupaten Sukoharjo</p>
+        </div>
+        <div class="navbar-right">
+            <a href="organik.html" class="nav-btn">‹ Dashboard</a>
+            <button class="nav-btn" id="logoutBtn" onclick="adminLogout()" style="display:none">Keluar Admin</button>
+        </div>
+    </div>
+
+    <!-- LOGIN GATE -->
+    <div id="loginGate">
+        <div class="login-icon">🔐</div>
+        <div class="login-title">Admin Panel</div>
+        <div class="login-sub">Masukkan password admin untuk melanjutkan</div>
+        <input type="password" class="login-input" id="adminPassInput"
+               placeholder="••••••••" onkeydown="if(event.key==='Enter') doLogin()">
+        <div class="login-error" id="loginError">Password salah. Coba lagi.</div>
+        <button class="login-btn" onclick="doLogin()">🔓 Masuk</button>
+    </div>
+
+    <!-- ADMIN PANEL -->
+    <div id="adminPanel">
+
+        <div class="page-title-row">
+            <div class="page-title-badge">⚙️</div>
+            <div class="page-title-text">
+                <h2>Kelola Jadwal Kegiatan</h2>
+                <p>Tambah, edit, dan hapus agenda — perubahan langsung tampil di dashboard</p>
+            </div>
+        </div>
+
+        <!-- ADD EVENT FORM -->
+        <div class="card">
+            <div class="card-title">➕ Tambah Agenda Baru</div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Tanggal</label>
+                    <input type="date" class="form-input" id="fDate">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Jam (mis. 08.00 – 12.00)</label>
+                    <input type="text" class="form-input" id="fTime" placeholder="08.00 – 12.00">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Nama Kegiatan</label>
+                    <input type="text" class="form-input" id="fName" placeholder="Contoh: Rapat koordinasi lapangan">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Lokasi</label>
+                    <input type="text" class="form-input" id="fLoc" placeholder="Contoh: Aula BPS / Zoom">
+                </div>
+            </div>
+            <div style="margin-top:12px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                <button class="btn-add" onclick="addEvent()">➕ Tambah Agenda</button>
+                <span class="form-hint">Semua kolom wajib diisi kecuali Lokasi.</span>
+            </div>
+        </div>
+
+        <!-- EVENTS LIST -->
+        <div class="card">
+            <div class="card-title" style="margin-bottom:16px;">
+                📋 Daftar Agenda
+                <span id="totalCount" style="font-size:11px;font-weight:700;color:#ff9a40;margin-left:auto;"></span>
+            </div>
+            <div class="events-list" id="eventsList"></div>
+        </div>
+
+        <!-- DANGER ZONE -->
+        <div class="card" style="padding:20px 24px;">
+            <div class="card-title" style="color:#c0392b; margin-bottom:14px;">⚠️ Zona Berbahaya</div>
+            <div class="danger-zone">
+                <div>
+                    <div class="danger-label">Reset ke Data Bawaan</div>
+                    <div class="danger-sub">Semua perubahan akan hilang dan data direset ke default.</div>
+                </div>
+                <button class="btn-reset" onclick="resetToDefault()">🔄 Reset Data</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+    const ADMIN_PASS = 'ADMIN3311';
+    const STORAGE_KEY = 'bps_jadwal_events';
+
+    const defaultEvents = {
+        '2026-05-26': [
+            { time: '08.00 – 10.00', name: 'Briefing Petugas Lapangan Gelombang 2', loc: 'Aula BPS Kab. Sukoharjo' },
+            { time: '13.00 – 15.00', name: 'Sesi Pendalaman Materi GoJags', loc: 'Online / Zoom' }
+        ],
+        '2026-05-27': [{ time: '08.00 – 12.00', name: 'Pelatihan Petugas – Gelombang 2 Hari 1', loc: 'BPS Kab. Sukoharjo' }],
+        '2026-05-28': [
+            { time: '08.00 – 12.00', name: 'Pelatihan Petugas – Gelombang 2 Hari 2', loc: 'BPS Kab. Sukoharjo' },
+            { time: '14.00 – 15.00', name: 'Pengumpulan Pretest Peserta', loc: 'Google Forms' }
+        ],
+        '2026-05-29': [{ time: '08.00 – 12.00', name: 'Pelatihan Petugas – Gelombang 2 Hari 3', loc: 'BPS Kab. Sukoharjo' }],
+        '2026-06-01': [{ time: '08.00 – 17.00', name: 'Pelaksanaan Lapangan SE2026 Dimulai', loc: 'Seluruh Kecamatan' }],
+        '2026-06-05': [
+            { time: '09.00 – 11.00', name: 'Monitoring Lapangan Minggu 1', loc: 'Koordinasi Kecamatan' },
+            { time: '15.00', name: 'Batas Upload Nota Bensin', loc: 'Google Drive' }
+        ],
+        '2026-06-12': [{ time: '15.00', name: 'Batas Upload Nota Bensin', loc: 'Google Drive' }],
+        '2026-06-19': [{ time: '15.00', name: 'Batas Upload Nota Bensin', loc: 'Google Drive' }],
+        '2026-06-26': [
+            { time: '08.00 – 12.00', name: 'Evaluasi Progres Lapangan', loc: 'Aula BPS Kab. Sukoharjo' },
+            { time: '15.00', name: 'Batas Upload Nota Bensin', loc: 'Google Drive' }
+        ]
+    };
+
+    const monthNames = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+    const dayNames   = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+
+    function loadEvents() {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) { try { return JSON.parse(raw); } catch(e) {} }
+        return JSON.parse(JSON.stringify(defaultEvents));
+    }
+    function saveEvents(data) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 2600);
+    }
+    function formatDateLabel(key) {
+        const [y, m, d] = key.split('-').map(Number);
+        const dt = new Date(y, m - 1, d);
+        return dayNames[dt.getDay()] + ', ' + d + ' ' + monthNames[m - 1] + ' ' + y;
+    }
+
+    function doLogin() {
+        const val = document.getElementById('adminPassInput').value;
+        const err = document.getElementById('loginError');
+        if (val === ADMIN_PASS) {
+            document.getElementById('loginGate').style.display = 'none';
+            document.getElementById('adminPanel').style.display = 'block';
+            document.getElementById('logoutBtn').style.display = 'inline-flex';
+            renderList();
+        } else {
+            err.style.display = 'block';
+            document.getElementById('adminPassInput').value = '';
+            document.getElementById('adminPassInput').focus();
+        }
+    }
+    function adminLogout() {
+        document.getElementById('adminPanel').style.display = 'none';
+        document.getElementById('loginGate').style.display = 'block';
+        document.getElementById('logoutBtn').style.display = 'none';
+        document.getElementById('adminPassInput').value = '';
+    }
+
+    function addEvent() {
+        const date = document.getElementById('fDate').value;
+        const time = document.getElementById('fTime').value.trim();
+        const name = document.getElementById('fName').value.trim();
+        const loc  = document.getElementById('fLoc').value.trim();
+        if (!date || !name) { showToast('⚠️ Tanggal dan nama kegiatan wajib diisi!'); return; }
+        const data = loadEvents();
+        if (!data[date]) data[date] = [];
+        data[date].push({ time, name, loc });
+        saveEvents(data);
+        document.getElementById('fDate').value = '';
+        document.getElementById('fTime').value = '';
+        document.getElementById('fName').value = '';
+        document.getElementById('fLoc').value  = '';
+        renderList();
+        showToast('✅ Agenda berhasil ditambahkan!');
+    }
+
+    function deleteEvent(date, idx) {
+        if (!confirm('Hapus agenda ini?')) return;
+        const data = loadEvents();
+        data[date].splice(idx, 1);
+        if (data[date].length === 0) delete data[date];
+        saveEvents(data);
+        renderList();
+        showToast('🗑️ Agenda dihapus.');
+    }
+
+    function startEdit(date, idx) {
+        const data = loadEvents();
+        const ev = data[date][idx];
+        const rowId = `row-${date}-${idx}`;
+        const row = document.getElementById(rowId);
+        if (!row) return;
+        row.classList.add('editing');
+        row.innerHTML = `
+            <div class="edit-grid">
+                <input class="edit-input ei-time" id="et-${date}-${idx}" value="${ev.time}" placeholder="Jam">
+                <input class="edit-input ei-name" id="en-${date}-${idx}" value="${ev.name}" placeholder="Nama kegiatan">
+                <input class="edit-input ei-loc"  id="el-${date}-${idx}" value="${ev.loc}"  placeholder="Lokasi">
+            </div>
+            <div class="event-row-actions">
+                <button class="btn-edit btn-save"   onclick="saveEdit('${date}',${idx})">💾 Simpan</button>
+                <button class="btn-edit btn-cancel" onclick="renderList()">Batal</button>
+            </div>`;
+    }
+
+    function saveEdit(date, idx) {
+        const time = document.getElementById(`et-${date}-${idx}`).value.trim();
+        const name = document.getElementById(`en-${date}-${idx}`).value.trim();
+        const loc  = document.getElementById(`el-${date}-${idx}`).value.trim();
+        if (!name) { showToast('⚠️ Nama kegiatan tidak boleh kosong!'); return; }
+        const data = loadEvents();
+        data[date][idx] = { time, name, loc };
+        saveEvents(data);
+        renderList();
+        showToast('✏️ Agenda diperbarui!');
+    }
+
+    function renderList() {
+        const data = loadEvents();
+        const list = document.getElementById('eventsList');
+        const keys = Object.keys(data).sort();
+        let total = 0;
+        keys.forEach(k => total += data[k].length);
+        document.getElementById('totalCount').textContent = total + ' agenda';
+
+        if (keys.length === 0) {
+            list.innerHTML = '<div class="empty-state">📭 Belum ada agenda. Tambahkan di atas!</div>';
+            return;
+        }
+        list.innerHTML = '';
+        keys.forEach(date => {
+            const events = data[date];
+            const group = document.createElement('div');
+            group.className = 'date-group';
+            let evHtml = events.map((ev, i) => `
+                <div class="event-row" id="row-${date}-${i}">
+                    <div class="event-dot"></div>
+                    <div class="event-row-info">
+                        <div class="event-row-time">${ev.time || '–'}</div>
+                        <div class="event-row-name">${ev.name}</div>
+                        ${ev.loc ? `<div class="event-row-loc">📍 ${ev.loc}</div>` : ''}
+                    </div>
+                    <div class="event-row-actions">
+                        <button class="btn-edit" onclick="startEdit('${date}',${i})">✏️ Edit</button>
+                        <button class="btn-del"  onclick="deleteEvent('${date}',${i})">🗑️</button>
+                    </div>
+                </div>`).join('');
+            group.innerHTML = `
+                <div class="date-group-header">
+                    <span class="date-group-label">📅 ${formatDateLabel(date)}</span>
+                    <span class="date-group-count">${events.length} agenda</span>
+                </div>
+                <div class="date-group-events">${evHtml}</div>`;
+            list.appendChild(group);
+        });
+    }
+
+    function resetToDefault() {
+        if (!confirm('Reset semua data ke default? Semua perubahan akan hilang.')) return;
+        saveEvents(JSON.parse(JSON.stringify(defaultEvents)));
+        renderList();
+        showToast('🔄 Data berhasil direset ke default.');
+    }
+
+    document.getElementById('adminPassInput').addEventListener('keydown', e => {
+        if (e.key === 'Enter') doLogin();
+    });
+
+    (function setDefaultDate() {
+        const today = new Date();
+        const y = today.getFullYear();
+        const m = String(today.getMonth() + 1).padStart(2, '0');
+        const d = String(today.getDate()).padStart(2, '0');
+        document.getElementById('fDate').value = `${y}-${m}-${d}`;
+    })();
+</script>
+</body>
+</html>

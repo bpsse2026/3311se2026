@@ -94,6 +94,14 @@
             border-radius: 18px; box-shadow: 0 8px 24px rgba(0,0,0,0.15);
         }
         .btn-logout:active { transform: scale(0.93); border-radius: 50px; }
+        .btn-admin {
+            padding: 8px 11px; font-size: 16px; line-height: 1;
+            background: rgba(255,255,255,0.18); color: white;
+            border: 1px solid rgba(255,255,255,0.3); border-radius: 50px;
+            text-decoration: none; flex-shrink: 0;
+            transition: background 0.2s, transform 0.18s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        .btn-admin:hover { background: rgba(255,255,255,0.35); transform: scale(1.12) rotate(30deg); }
 
         /* MAIN GRID */
         .main-grid {
@@ -406,6 +414,7 @@
                 <p>BPS Kabupaten Sukoharjo</p>
             </div>
             <div class="navbar-welcome">Welcome, <span id="welcomeUser"></span>!</div>
+            <a href="admin.html" class="btn-admin" title="Admin Panel">⚙️</a>
             <button class="btn-logout" onclick="logout()">Logout</button>
         </div>
 
@@ -566,7 +575,7 @@
             renderCalendar(viewYear, viewMonth);
         }
 
-        const jadwalEvents = {
+        const defaultJadwalEvents = {
             '2026-05-26': [
                 { time: '08.00 – 10.00', name: 'Briefing Petugas Lapangan Gelombang 2', loc: 'Aula BPS Kab. Sukoharjo' },
                 { time: '13.00 – 15.00', name: 'Sesi Pendalaman Materi GoJags', loc: 'Online / Zoom' }
@@ -599,6 +608,17 @@
                 { time: '15.00', name: 'Batas Upload Nota Bensin', loc: 'Google Drive' }
             ]
         };
+
+        function loadJadwalEvents() {
+            const saved = localStorage.getItem('bps_jadwal_events');
+            if (saved) {
+                try { return JSON.parse(saved); } catch(e) {}
+            }
+            localStorage.setItem('bps_jadwal_events', JSON.stringify(defaultJadwalEvents));
+            return defaultJadwalEvents;
+        }
+
+        let jadwalEvents = loadJadwalEvents();
 
         const dayNames = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
 
