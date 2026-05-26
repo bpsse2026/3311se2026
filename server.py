@@ -1,5 +1,6 @@
 import http.server
 import socketserver
+import socket
 import os
 import json
 
@@ -30,7 +31,16 @@ class Handler(http.server.SimpleHTTPRequestHandler):
     def log_message(self, format, *args):
         print(f"{self.address_string()} - {format % args}")
 
-with socketserver.TCPServer((HOST, PORT), Handler) as httpd:
-    httpd.allow_reuse_address = True
+class ReusableTCPServer(socketserver.TCPServer):
+    allow_reuse_address = True
+    def server_bind(self):
+        self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        try:
+            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
+        except AttributeError:
+            pass
+        super().server_bind()
+
+with ReusableTCPServer((HOST, PORT), Handler) as httpd:
     print(f"Serving on {HOST}:{PORT}")
     httpd.serve_forever()
