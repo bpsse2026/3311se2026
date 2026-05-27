@@ -218,7 +218,19 @@
         /* INFO PENTING */
         .info-penting-content {
             font-size: 13px; color: #555; line-height: 1.8;
-            min-height: 100px;
+            height: 186px;
+            overflow-y: auto;
+            padding-right: 6px;
+        }
+        .info-penting-content::-webkit-scrollbar {
+            width: 5px;
+        }
+        .info-penting-content::-webkit-scrollbar-track {
+            background: #fff0e0; border-radius: 10px;
+        }
+        .info-penting-content::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #ffb300, #ff5500);
+            border-radius: 10px;
         }
         .info-item {
             display: flex; gap: 10px; align-items: flex-start;
@@ -364,15 +376,6 @@
             box-shadow: 0 8px 24px rgba(255,80,0,0.4);
         }
 
-        /* INFO SCROLL BUTTON */
-        .info-scroll-btn {
-            width: 100%; margin-top: 10px;
-            padding: 9px; background: linear-gradient(135deg, #fff0e0, #ffe0c0);
-            border: 2px solid #ffd0a0; border-radius: 50px;
-            color: #ff6a00; font-size: 12px; font-weight: 700;
-            cursor: pointer; transition: all 0.2s;
-        }
-        .info-scroll-btn:hover { background: linear-gradient(135deg, #ffe0c0, #ffcfa0); border-color: #ff8c00; }
 
         /* JADWAL TITLE LINK */
         .card-title-link {
@@ -546,20 +549,19 @@
                             <span class="info-badge">INFO</span>
                             <span class="info-text">Upload nota bensin paling lambat setiap Jumat pukul 15.00 WIB.</span>
                         </div>
-                        <div class="info-item info-extra" style="display:none">
+                        <div class="info-item">
                             <span class="info-badge">INFO</span>
                             <span class="info-text">Pastikan nomor telepon sudah diperbarui di formulir yang tersedia.</span>
                         </div>
-                        <div class="info-item info-extra" style="display:none">
+                        <div class="info-item">
                             <span class="info-badge">PENTING</span>
                             <span class="info-text">Koordinasi dengan supervisor kecamatan wajib dilakukan sebelum turun lapangan.</span>
                         </div>
-                        <div class="info-item info-extra" style="display:none">
+                        <div class="info-item">
                             <span class="info-badge">PENTING</span>
                             <span class="info-text">Absensi harian wajib diisi sebelum pukul 08.00 WIB setiap hari kerja.</span>
                         </div>
                     </div>
-                    <button class="info-scroll-btn" id="infoScrollBtn" onclick="toggleInfoScroll()">▼ Lihat lebih banyak</button>
                 </div>
 
                 <!-- JADWAL KEGIATAN -->
@@ -612,13 +614,6 @@
             window.location.href = 'index.html';
         }
 
-        function toggleInfoScroll() {
-            const extras = document.querySelectorAll('.info-extra');
-            const btn = document.getElementById('infoScrollBtn');
-            const isHidden = extras[0].style.display === 'none';
-            extras.forEach(el => el.style.display = isHidden ? 'flex' : 'none');
-            btn.textContent = isHidden ? '▲ Lihat lebih sedikit' : '▼ Lihat lebih banyak';
-        }
 
         const monthNames = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
         let currentDate = new Date();
