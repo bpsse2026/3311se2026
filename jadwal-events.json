@@ -15,40 +15,21 @@
   ],
   "2026-06-05": [
     {
-      "time": "09.00 - 11.00",
-      "name": "Monitoring Lapangan Minggu 1",
-      "loc": "Koordinasi Kecamatan"
+      "time": "07.00 - 12.00",
+      "name": "Pelatihan Petugas SE26 Gelombang 1",
+      "loc": "Hotel Sahid Jaya / Hotel Dwangsa"
     },
     {
-      "time": "15.00",
-      "name": "Batas Upload Nota Bensin",
-      "loc": "Google Drive"
+      "time": "07.00 - 18.00",
+      "name": "Pelatihan Petugas SE26 Gelombang 2",
+      "loc": "Hotel Ibis Style / Hotel Brothers"
     }
   ],
   "2026-06-12": [
     {
-      "time": "15.00",
-      "name": "Batas Upload Nota Bensin",
-      "loc": "Google Drive"
-    }
-  ],
-  "2026-06-19": [
-    {
-      "time": "15.00",
-      "name": "Batas Upload Nota Bensin",
-      "loc": "Google Drive"
-    }
-  ],
-  "2026-06-26": [
-    {
-      "time": "08.00 - 12.00",
-      "name": "Evaluasi Progres Lapangan",
-      "loc": "Aula BPS Kab. Sukoharjo"
-    },
-    {
-      "time": "15.00",
-      "name": "Batas Upload Nota Bensin",
-      "loc": "Google Drive"
+      "time": "07.00 - 18.00",
+      "name": "Pelatihan Petugas SE26 Gelombang 3",
+      "loc": "Hotel Dewangsa / Hotel Brothers"
     }
   ],
   "2026-05-30": [
@@ -73,8 +54,84 @@
     },
     {
       "time": "07.00 - 18.00",
-      "name": "Pelatihan Petguas SE26 Gelombang 1",
+      "name": "Pelatihan Petugas SE26 Gelombang 1",
       "loc": "Hotel Sahid Jaya / Hotel Dwangsa"
+    }
+  ],
+  "2026-06-03": [
+    {
+      "time": "07.00 - 18.00",
+      "name": "Pelatihan Petugas SE26 Gelombang 1",
+      "loc": "Hotel Sahid Jaya / Hotel Dwangsa"
+    },
+    {
+      "time": "07.00 - 18.00",
+      "name": "Pendalaman Materi Pendataan SE2026 (MOOC) Gelombang 2",
+      "loc": "Web Gojags"
+    }
+  ],
+  "2026-06-04": [
+    {
+      "time": "07.00 - 18.00",
+      "name": "Pelatihan Petugas SE26 Gelombang 1",
+      "loc": "Hotel Sahid Jaya / Hotel Dwangsa"
+    },
+    {
+      "time": "07.00 - 18.00",
+      "name": "Pendalaman Materi Pendataan SE2026 (MOOC) Gelombang 2",
+      "loc": "Web Gojags"
+    }
+  ],
+  "2026-06-06": [
+    {
+      "time": "07.00 - 18.00",
+      "name": "Pelatihan Petugas SE26 Gelombang 2",
+      "loc": "Hotel Ibis Style / Hotel Brothers"
+    }
+  ],
+  "2026-06-07": [
+    {
+      "time": "07.00 - 18.00",
+      "name": "Pelatihan Petugas SE26 Gelombang 2",
+      "loc": "Hotel Ibis Style / Hotel Brothers"
+    },
+    {
+      "time": "07.00 - 18.00",
+      "name": "Pendalaman Materi Pendataan SE2026 (MOOC) Gelombang 3",
+      "loc": "Web Gojags"
+    }
+  ],
+  "2026-06-08": [
+    {
+      "time": "07.00 - 12.00",
+      "name": "Pelatihan Petugas SE26 Gelombang 2",
+      "loc": "Hotel Ibis Style / Hotel Brothers"
+    },
+    {
+      "time": "07.00 - 18.00",
+      "name": "Pendalaman Materi Pendataan SE2026 (MOOC) Gelombang 3",
+      "loc": "Web Gojags"
+    }
+  ],
+  "2026-06-09": [
+    {
+      "time": "07.00 - 18.00",
+      "name": "Pendalaman Materi Pendataan SE2026 (MOOC) Gelombang 3",
+      "loc": "Web Gojags"
+    }
+  ],
+  "2026-06-10": [
+    {
+      "time": "07.00 - 18.00",
+      "name": "Pelatihan Petugas SE26 Gelombang 3",
+      "loc": "Hotel Dewangsa / Hotel Brothers"
+    }
+  ],
+  "2026-06-11": [
+    {
+      "time": "07.00 - 18.00",
+      "name": "Pelatihan Petugas SE26 Gelombang 3",
+      "loc": "Hotel Dewangsa / Hotel Brothers"
     }
   ]
 }
