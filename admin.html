@@ -582,28 +582,40 @@
         btn.disabled = true; btn.innerHTML = '⏳ Menyimpan...';
         document.getElementById('progressSuccessBox').style.display = 'none';
         document.getElementById('progressErrorBox').style.display   = 'none';
+        const data = { pendataan, response };
         try {
-            await getProgressSha();
-            const data    = { pendataan, response };
-            const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
-            const body    = { message: 'Update progress-data.json via admin panel', content, branch: GH_BRANCH };
-            if (progressSha) body.sha = progressSha;
-            const res = await fetch(PROG_API_URL, {
-                method: 'PUT',
-                headers: {
-                    'Authorization': 'Bearer ' + ghToken,
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/vnd.github+json',
-                    'X-GitHub-Api-Version': '2022-11-28'
-                },
-                body: JSON.stringify(body)
+            // 1. Save locally (immediate effect)
+            const localRes = await fetch('/api/progress', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
             });
-            const json = await res.json();
-            if (!res.ok) throw new Error(json.message || 'GitHub error ' + res.status);
-            progressSha  = json.content?.sha || progressSha;
+            if (!localRes.ok) throw new Error('Server lokal gagal menyimpan');
+
             progressData = data;
             document.getElementById('progressSuccessBox').style.display = 'block';
             setTimeout(() => { document.getElementById('progressSuccessBox').style.display = 'none'; }, 5000);
+
+            // 2. Also sync to GitHub in background (best effort)
+            if (ghToken) {
+                getProgressSha().then(function() {
+                    const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
+                    const body    = { message: 'Update progress-data.json via admin panel', content, branch: GH_BRANCH };
+                    if (progressSha) body.sha = progressSha;
+                    return fetch(PROG_API_URL, {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': 'Bearer ' + ghToken,
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/vnd.github+json',
+                            'X-GitHub-Api-Version': '2022-11-28'
+                        },
+                        body: JSON.stringify(body)
+                    });
+                }).then(function(r) {
+                    return r.json().then(function(j) { if (r.ok) progressSha = j.content?.sha || progressSha; });
+                }).catch(function() {});
+            }
         } catch(err) {
             document.getElementById('progressErrorMsg').textContent = '❌ Gagal menyimpan: ' + err.message;
             document.getElementById('progressErrorBox').style.display = 'block';
