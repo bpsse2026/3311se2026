@@ -86,23 +86,37 @@
         /* MAIN CONTENT */
         .content { width: 100%; max-width: 900px; }
 
-        /* HEADER CARD */
-        .header-card {
+        /* POWER BI EMBED CARD */
+        .powerbi-card {
             background: rgba(255,255,255,0.95);
-            border-radius: 20px; padding: 24px 28px;
-            box-shadow: 0 6px 24px rgba(0,0,0,0.1);
+            border-radius: 20px;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.12);
             margin-bottom: 20px;
-            display: flex; align-items: center; gap: 18px;
+            overflow: hidden;
         }
-        .header-icon { font-size: 48px; }
-        .header-title { font-size: 22px; font-weight: 900; color: #1a1a1a; }
-        .header-sub  { font-size: 13px; color: #888; font-weight: 600; margin-top: 4px; }
-        .header-badge {
-            margin-left: auto; flex-shrink: 0;
-            background: linear-gradient(135deg, #00c9a7, #0077b6);
-            color: white; font-size: 11px; font-weight: 800;
-            padding: 6px 16px; border-radius: 50px;
-            letter-spacing: 0.5px;
+        .powerbi-card-header {
+            background: linear-gradient(135deg, #0077b6, #00c9a7);
+            padding: 14px 22px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .powerbi-card-header span { font-size: 18px; }
+        .powerbi-card-header h2 {
+            font-size: 14px; font-weight: 900; color: white;
+        }
+        .powerbi-card-header p {
+            font-size: 11px; color: rgba(255,255,255,0.8); font-weight: 600;
+        }
+        .powerbi-iframe-wrap {
+            width: 100%;
+            position: relative;
+            padding-bottom: 104.5%;
+        }
+        .powerbi-iframe-wrap iframe {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            border: none;
+            display: block;
         }
 
         /* RING GRID */
@@ -154,7 +168,7 @@
             gap: 12px;
         }
         .stats-row:last-child { border-bottom: none; }
-        .stats-label { font-size: 13px; font-weight: 700; color: #444; }
+        .stats-label { font-size: 13px; font-weight: 700; color: #444; min-width: 80px; }
         .stats-bar-wrap { flex: 1; height: 8px; background: #f0f0f0; border-radius: 50px; overflow: hidden; }
         .stats-bar {
             height: 100%; border-radius: 50px;
@@ -171,9 +185,8 @@
         }
 
         @media (max-width: 600px) {
-            .header-card { flex-wrap: wrap; }
-            .header-badge { margin-left: 0; }
             .rings-grid { grid-template-columns: repeat(2, 1fr); }
+            .navbar-text h1 { font-size: 13px; }
         }
     </style>
 </head>
@@ -201,19 +214,27 @@
 
         <div class="content">
 
-            <!-- HEADER -->
-            <div class="header-card">
-                <div class="header-icon">📊</div>
-                <div>
-                    <div class="header-title">Dashboard Progress Lapangan</div>
-                    <div class="header-sub">Sensus Ekonomi 2026 — Kabupaten Sukoharjo</div>
+            <!-- POWER BI EMBED -->
+            <div class="powerbi-card">
+                <div class="powerbi-card-header">
+                    <span>📈</span>
+                    <div>
+                        <h2>Monitoring SE2026 BPS Kabupaten Sukoharjo</h2>
+                        <p>Data real-time dari Power BI</p>
+                    </div>
                 </div>
-                <div class="header-badge">SE2026</div>
+                <div class="powerbi-iframe-wrap">
+                    <iframe
+                        title="Monitoring SE2026 BPS Kabupaten Sukoharjo"
+                        src="https://app.powerbi.com/view?r=eyJrIjoiN2MyMjRjYzktZTgzYi00Yjc0LTgwNDYtMmZmNGZkYmZiZjIzIiwidCI6IjA1NmJlZmUzLTNhODktNDM1Ny04NDM4LTc4ZTczMGFjNWVjMyJ9"
+                        frameborder="0"
+                        allowfullscreen="true">
+                    </iframe>
+                </div>
             </div>
 
             <!-- CIRCULAR RINGS -->
             <div class="rings-grid">
-                <!-- Progress Pendataan -->
                 <div class="ring-card">
                     <div class="ring-wrap">
                         <svg width="120" height="120" viewBox="0 0 120 120">
@@ -232,10 +253,9 @@
                         </div>
                     </div>
                     <div class="ring-name">Progress Pendataan</div>
-                    <div class="ring-detail" id="rdet-pendataan">— usaha tercatat</div>
+                    <div class="ring-detail">— usaha tercatat</div>
                 </div>
 
-                <!-- Response Rate -->
                 <div class="ring-card">
                     <div class="ring-wrap">
                         <svg width="120" height="120" viewBox="0 0 120 120">
@@ -254,10 +274,9 @@
                         </div>
                     </div>
                     <div class="ring-name">Response Rate</div>
-                    <div class="ring-detail" id="rdet-response">— responden kooperatif</div>
+                    <div class="ring-detail">— responden kooperatif</div>
                 </div>
 
-                <!-- Upload Dokumen -->
                 <div class="ring-card">
                     <div class="ring-wrap">
                         <svg width="120" height="120" viewBox="0 0 120 120">
@@ -276,10 +295,9 @@
                         </div>
                     </div>
                     <div class="ring-name">Upload Dokumen</div>
-                    <div class="ring-detail" id="rdet-upload">— dokumen terupload</div>
+                    <div class="ring-detail">— dokumen terupload</div>
                 </div>
 
-                <!-- Verifikasi Data -->
                 <div class="ring-card">
                     <div class="ring-wrap">
                         <svg width="120" height="120" viewBox="0 0 120 120">
@@ -298,7 +316,7 @@
                         </div>
                     </div>
                     <div class="ring-name">Verifikasi Data</div>
-                    <div class="ring-detail" id="rdet-verifikasi">— data terverifikasi</div>
+                    <div class="ring-detail">— data terverifikasi</div>
                 </div>
             </div>
 
@@ -307,63 +325,63 @@
                 <div class="stats-title"><span>📋</span> Rincian Per Kecamatan</div>
                 <div class="stats-row">
                     <div class="stats-label">Grogol</div>
-                    <div class="stats-bar-wrap"><div class="stats-bar" data-val="0" style="background: linear-gradient(90deg,#00c9a7,#0077b6)"></div></div>
-                    <div class="stats-val" id="bar-grogol">0%</div>
+                    <div class="stats-bar-wrap"><div class="stats-bar" data-val="0" style="background:linear-gradient(90deg,#00c9a7,#0077b6)"></div></div>
+                    <div class="stats-val">0%</div>
                 </div>
                 <div class="stats-row">
                     <div class="stats-label">Baki</div>
-                    <div class="stats-bar-wrap"><div class="stats-bar" data-val="0" style="background: linear-gradient(90deg,#ff8c00,#ff5500)"></div></div>
-                    <div class="stats-val" id="bar-baki">0%</div>
+                    <div class="stats-bar-wrap"><div class="stats-bar" data-val="0" style="background:linear-gradient(90deg,#ff8c00,#ff5500)"></div></div>
+                    <div class="stats-val">0%</div>
                 </div>
                 <div class="stats-row">
                     <div class="stats-label">Gatak</div>
-                    <div class="stats-bar-wrap"><div class="stats-bar" data-val="0" style="background: linear-gradient(90deg,#a855f7,#7c3aed)"></div></div>
-                    <div class="stats-val" id="bar-gatak">0%</div>
+                    <div class="stats-bar-wrap"><div class="stats-bar" data-val="0" style="background:linear-gradient(90deg,#a855f7,#7c3aed)"></div></div>
+                    <div class="stats-val">0%</div>
                 </div>
                 <div class="stats-row">
                     <div class="stats-label">Kartasura</div>
-                    <div class="stats-bar-wrap"><div class="stats-bar" data-val="0" style="background: linear-gradient(90deg,#f43f5e,#e11d48)"></div></div>
-                    <div class="stats-val" id="bar-kartasura">0%</div>
+                    <div class="stats-bar-wrap"><div class="stats-bar" data-val="0" style="background:linear-gradient(90deg,#f43f5e,#e11d48)"></div></div>
+                    <div class="stats-val">0%</div>
                 </div>
                 <div class="stats-row">
                     <div class="stats-label">Sukoharjo</div>
-                    <div class="stats-bar-wrap"><div class="stats-bar" data-val="0" style="background: linear-gradient(90deg,#00c9a7,#0077b6)"></div></div>
-                    <div class="stats-val" id="bar-sukoharjo">0%</div>
+                    <div class="stats-bar-wrap"><div class="stats-bar" data-val="0" style="background:linear-gradient(90deg,#00c9a7,#0077b6)"></div></div>
+                    <div class="stats-val">0%</div>
                 </div>
                 <div class="stats-row">
                     <div class="stats-label">Nguter</div>
-                    <div class="stats-bar-wrap"><div class="stats-bar" data-val="0" style="background: linear-gradient(90deg,#ff8c00,#ff5500)"></div></div>
-                    <div class="stats-val" id="bar-nguter">0%</div>
+                    <div class="stats-bar-wrap"><div class="stats-bar" data-val="0" style="background:linear-gradient(90deg,#ff8c00,#ff5500)"></div></div>
+                    <div class="stats-val">0%</div>
                 </div>
                 <div class="stats-row">
                     <div class="stats-label">Bendosari</div>
-                    <div class="stats-bar-wrap"><div class="stats-bar" data-val="0" style="background: linear-gradient(90deg,#a855f7,#7c3aed)"></div></div>
-                    <div class="stats-val" id="bar-bendosari">0%</div>
+                    <div class="stats-bar-wrap"><div class="stats-bar" data-val="0" style="background:linear-gradient(90deg,#a855f7,#7c3aed)"></div></div>
+                    <div class="stats-val">0%</div>
                 </div>
                 <div class="stats-row">
                     <div class="stats-label">Polokarto</div>
-                    <div class="stats-bar-wrap"><div class="stats-bar" data-val="0" style="background: linear-gradient(90deg,#f43f5e,#e11d48)"></div></div>
-                    <div class="stats-val" id="bar-polokarto">0%</div>
+                    <div class="stats-bar-wrap"><div class="stats-bar" data-val="0" style="background:linear-gradient(90deg,#f43f5e,#e11d48)"></div></div>
+                    <div class="stats-val">0%</div>
                 </div>
                 <div class="stats-row">
                     <div class="stats-label">Mojolaban</div>
-                    <div class="stats-bar-wrap"><div class="stats-bar" data-val="0" style="background: linear-gradient(90deg,#00c9a7,#0077b6)"></div></div>
-                    <div class="stats-val" id="bar-mojolaban">0%</div>
+                    <div class="stats-bar-wrap"><div class="stats-bar" data-val="0" style="background:linear-gradient(90deg,#00c9a7,#0077b6)"></div></div>
+                    <div class="stats-val">0%</div>
                 </div>
                 <div class="stats-row">
                     <div class="stats-label">Tawangsari</div>
-                    <div class="stats-bar-wrap"><div class="stats-bar" data-val="0" style="background: linear-gradient(90deg,#ff8c00,#ff5500)"></div></div>
-                    <div class="stats-val" id="bar-tawangsari">0%</div>
+                    <div class="stats-bar-wrap"><div class="stats-bar" data-val="0" style="background:linear-gradient(90deg,#ff8c00,#ff5500)"></div></div>
+                    <div class="stats-val">0%</div>
                 </div>
                 <div class="stats-row">
                     <div class="stats-label">Weru</div>
-                    <div class="stats-bar-wrap"><div class="stats-bar" data-val="0" style="background: linear-gradient(90deg,#a855f7,#7c3aed)"></div></div>
-                    <div class="stats-val" id="bar-weru">0%</div>
+                    <div class="stats-bar-wrap"><div class="stats-bar" data-val="0" style="background:linear-gradient(90deg,#a855f7,#7c3aed)"></div></div>
+                    <div class="stats-val">0%</div>
                 </div>
                 <div class="stats-row">
                     <div class="stats-label">Bulu</div>
-                    <div class="stats-bar-wrap"><div class="stats-bar" data-val="0" style="background: linear-gradient(90deg,#f43f5e,#e11d48)"></div></div>
-                    <div class="stats-val" id="bar-bulu">0%</div>
+                    <div class="stats-bar-wrap"><div class="stats-bar" data-val="0" style="background:linear-gradient(90deg,#f43f5e,#e11d48)"></div></div>
+                    <div class="stats-val">0%</div>
                 </div>
             </div>
 
@@ -411,11 +429,6 @@
             rings.forEach(animateRing);
             animateBars();
         }, 300);
-
-        function logout() {
-            sessionStorage.removeItem('currentUser');
-            window.location.replace('index.html');
-        }
     </script>
 </body>
 </html>
