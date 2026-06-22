@@ -1222,15 +1222,14 @@
         // PROGRESS RINGS ANIMATION
         (function() {
             const CIRCUMFERENCE = 283;
+            const PROG_RAW = 'https://raw.githubusercontent.com/bpsse2026/3311se2026/main/progress-data.json';
             const metrics = [
-                { fillId: null, pctId: 'pct-pendataan', value: 0 },
-                { fillId: null, pctId: 'pct-response',  value: 0 },
-                { fillId: null, pctId: 'pct-upload',    value: 0 },
-                { fillId: null, pctId: 'pct-verifikasi',value: 0 },
+                { pctId: 'pct-pendataan', value: 0 },
+                { pctId: 'pct-response',  value: 0 },
             ];
             const fills = document.querySelectorAll('.progress-ring-fill');
             fills.forEach(function(el, i) {
-                metrics[i].el = el;
+                if (metrics[i]) metrics[i].el = el;
             });
 
             function animateRings() {
@@ -1242,7 +1241,7 @@
                     const label = document.getElementById(m.pctId);
                     if (label) {
                         let current = 0;
-                        const step = pct / 60;
+                        const step = Math.max(pct / 60, 0.5);
                         const timer = setInterval(function() {
                             current = Math.min(current + step, pct);
                             label.textContent = Math.round(current) + '%';
@@ -1252,15 +1251,20 @@
                 });
             }
 
-            window.setProgress = function(pendataan, response, upload, verifikasi) {
+            window.setProgress = function(pendataan, response) {
                 metrics[0].value = pendataan;
                 metrics[1].value = response;
-                metrics[2].value = upload;
-                metrics[3].value = verifikasi;
                 animateRings();
             };
 
-            setTimeout(animateRings, 400);
+            fetch(PROG_RAW + '?t=' + Date.now())
+                .then(function(r) { return r.ok ? r.json() : {}; })
+                .then(function(data) {
+                    if (data.pendataan != null) metrics[0].value = Number(data.pendataan);
+                    if (data.response  != null) metrics[1].value = Number(data.response);
+                    animateRings();
+                })
+                .catch(function() { animateRings(); });
         })();
 
         function openAppPopup() {
