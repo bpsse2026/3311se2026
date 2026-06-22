@@ -315,8 +315,23 @@
         }
         .progress-updated {
             font-size: 10px; color: #bbb; font-weight: 600;
-            text-align: right; margin-top: 8px;
+            text-align: right; margin-top: 8px; margin-bottom: 12px;
         }
+        .btn-dashboard-progress {
+            display: block; width: 100%; text-align: center;
+            padding: 12px; border-radius: 50px;
+            background: linear-gradient(135deg, #00c9a7, #0077b6);
+            color: white; font-size: 13px; font-weight: 800;
+            text-decoration: none;
+            box-shadow: 0 4px 16px rgba(0,119,182,0.3);
+            transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1),
+                        box-shadow 0.18s ease, border-radius 0.22s;
+        }
+        .btn-dashboard-progress:hover {
+            transform: scale(1.04); border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0,119,182,0.4);
+        }
+        .btn-dashboard-progress:active { transform: scale(0.96); border-radius: 50px; }
 
         /* APP DOWNLOAD POPUP */
         .app-popup-overlay {
@@ -768,48 +783,11 @@
                             </div>
                             <div class="progress-item-name">Response Rate</div>
                         </div>
-                        <div class="progress-item">
-                            <div class="progress-ring-wrap">
-                                <svg width="100" height="100" viewBox="0 0 100 100">
-                                    <circle class="progress-ring-bg" cx="50" cy="50" r="45"/>
-                                    <circle class="progress-ring-fill" cx="50" cy="50" r="45"
-                                        data-pct="0" stroke="url(#grad3)"/>
-                                    <defs>
-                                        <linearGradient id="grad3" x1="0%" y1="0%" x2="100%" y2="100%">
-                                            <stop offset="0%" style="stop-color:#a855f7"/>
-                                            <stop offset="100%" style="stop-color:#7c3aed"/>
-                                        </linearGradient>
-                                    </defs>
-                                </svg>
-                                <div class="progress-ring-label">
-                                    <span class="progress-ring-pct" id="pct-upload">0%</span>
-                                    <span class="progress-ring-sub">Upload</span>
-                                </div>
-                            </div>
-                            <div class="progress-item-name">Upload Dokumen</div>
-                        </div>
-                        <div class="progress-item">
-                            <div class="progress-ring-wrap">
-                                <svg width="100" height="100" viewBox="0 0 100 100">
-                                    <circle class="progress-ring-bg" cx="50" cy="50" r="45"/>
-                                    <circle class="progress-ring-fill" cx="50" cy="50" r="45"
-                                        data-pct="0" stroke="url(#grad4)"/>
-                                    <defs>
-                                        <linearGradient id="grad4" x1="0%" y1="0%" x2="100%" y2="100%">
-                                            <stop offset="0%" style="stop-color:#f43f5e"/>
-                                            <stop offset="100%" style="stop-color:#e11d48"/>
-                                        </linearGradient>
-                                    </defs>
-                                </svg>
-                                <div class="progress-ring-label">
-                                    <span class="progress-ring-pct" id="pct-verifikasi">0%</span>
-                                    <span class="progress-ring-sub">Verifikasi</span>
-                                </div>
-                            </div>
-                            <div class="progress-item-name">Verifikasi Data</div>
-                        </div>
                     </div>
                     <p class="progress-updated">*Data diperbarui secara manual oleh admin</p>
+                    <a href="dashboard-progress.html" class="btn-dashboard-progress">
+                        📊 Dashboard Progress
+                    </a>
                 </div>
 
                 <!-- MY LEARNING STEP -->
@@ -1244,14 +1222,12 @@
         (function() {
             const CIRCUMFERENCE = 283;
             const metrics = [
-                { fillId: null, pctId: 'pct-pendataan', value: 0 },
-                { fillId: null, pctId: 'pct-response',  value: 0 },
-                { fillId: null, pctId: 'pct-upload',    value: 0 },
-                { fillId: null, pctId: 'pct-verifikasi',value: 0 },
+                { pctId: 'pct-pendataan', value: 0 },
+                { pctId: 'pct-response',  value: 0 },
             ];
             const fills = document.querySelectorAll('.progress-ring-fill');
             fills.forEach(function(el, i) {
-                metrics[i].el = el;
+                if (metrics[i]) metrics[i].el = el;
             });
 
             function animateRings() {
@@ -1263,7 +1239,7 @@
                     const label = document.getElementById(m.pctId);
                     if (label) {
                         let current = 0;
-                        const step = pct / 60;
+                        const step = Math.max(pct / 60, 0.5);
                         const timer = setInterval(function() {
                             current = Math.min(current + step, pct);
                             label.textContent = Math.round(current) + '%';
@@ -1273,11 +1249,9 @@
                 });
             }
 
-            window.setProgress = function(pendataan, response, upload, verifikasi) {
+            window.setProgress = function(pendataan, response) {
                 metrics[0].value = pendataan;
                 metrics[1].value = response;
-                metrics[2].value = upload;
-                metrics[3].value = verifikasi;
                 animateRings();
             };
 

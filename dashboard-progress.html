@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Progress Lapangan — SE2026</title>
+    <script>
+        (function() {
+            if (!sessionStorage.getItem('currentUser')) {
+                window.location.replace('index.html');
+            }
+        })();
+    </script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ff6a00 0%, #fff0e0 50%, #ff8c00 100%);
+            background-size: 300% 300%;
+            animation: bgShift 8s ease infinite;
+            min-height: 100vh;
+        }
+        @keyframes bgShift {
+            0%   { background-position: 0% 50%; }
+            50%  { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .bubbles {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none; z-index: 0; overflow: hidden;
+        }
+        .bubble {
+            position: absolute; bottom: -200px; border-radius: 50%;
+            background: rgba(255,200,50,0.18);
+            animation: floatUp linear infinite;
+        }
+        .bubble:nth-child(1) { width:120px; height:120px; left:8%;  animation-duration:9s;  animation-delay:0s; }
+        .bubble:nth-child(2) { width:70px;  height:70px;  left:22%; animation-duration:7s;  animation-delay:1.5s; }
+        .bubble:nth-child(3) { width:180px; height:180px; left:45%; animation-duration:11s; animation-delay:3s; }
+        .bubble:nth-child(4) { width:90px;  height:90px;  left:63%; animation-duration:8s;  animation-delay:0.8s; }
+        .bubble:nth-child(5) { width:55px;  height:55px;  left:78%; animation-duration:6s;  animation-delay:2s; }
+        @keyframes floatUp {
+            0%   { transform: translateY(0) scale(1);        opacity: 0.6; }
+            50%  { transform: translateY(-50vh) scale(1.05); opacity: 0.4; }
+            100% { transform: translateY(-110vh) scale(1);   opacity: 0; }
+        }
+
+        .page-wrapper {
+            position: relative; z-index: 1;
+            min-height: 100vh;
+            display: flex; flex-direction: column; align-items: center;
+            padding: 24px 20px 40px;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            width: 100%; max-width: 900px;
+            background: linear-gradient(135deg, #ff8c00 0%, #ff5500 100%);
+            padding: 14px 24px;
+            display: flex; align-items: center; gap: 14px;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(255,80,0,0.3);
+            margin-bottom: 24px;
+        }
+        .navbar-logo {
+            width: 44px; height: 44px;
+            object-fit: cover; border-radius: 10px; flex-shrink: 0;
+        }
+        .navbar-text h1 { font-size: 16px; font-weight: 900; color: white; }
+        .navbar-text p  { font-size: 11px; color: rgba(255,255,255,0.85); font-weight: 600; }
+        .btn-back {
+            margin-left: auto;
+            padding: 9px 20px;
+            background: rgba(255,255,255,0.25); color: white;
+            font-size: 13px; font-weight: 700;
+            border: 1px solid rgba(255,255,255,0.35);
+            border-radius: 50px; cursor: pointer; text-decoration: none;
+            transition: background 0.2s, transform 0.18s cubic-bezier(0.34,1.56,0.64,1);
+            flex-shrink: 0;
+        }
+        .btn-back:hover { background: rgba(255,255,255,0.4); transform: scale(1.05); }
+
+        /* MAIN CONTENT */
+        .content { width: 100%; max-width: 900px; }
+
+        /* HEADER CARD */
+        .header-card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px; padding: 24px 28px;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            display: flex; align-items: center; gap: 18px;
+        }
+        .header-icon { font-size: 48px; }
+        .header-title { font-size: 22px; font-weight: 900; color: #1a1a1a; }
+        .header-sub  { font-size: 13px; color: #888; font-weight: 600; margin-top: 4px; }
+        .header-badge {
+            margin-left: auto; flex-shrink: 0;
+            background: linear-gradient(135deg, #00c9a7, #0077b6);
+            color: white; font-size: 11px; font-weight: 800;
+            padding: 6px 16px; border-radius: 50px;
+            letter-spacing: 0.5px;
+        }
+
+        /* RING GRID */
+        .rings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .ring-card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px; padding: 24px 16px;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.1);
+            display: flex; flex-direction: column; align-items: center; gap: 12px;
+        }
+        .ring-wrap {
+            position: relative; width: 120px; height: 120px;
+        }
+        .ring-wrap svg { transform: rotate(-90deg); }
+        .ring-bg   { fill: none; stroke: #f0f0f0; stroke-width: 10; }
+        .ring-fill {
+            fill: none; stroke-width: 10; stroke-linecap: round;
+            stroke-dasharray: 345; stroke-dashoffset: 345;
+            transition: stroke-dashoffset 1.6s cubic-bezier(0.4,0,0.2,1);
+        }
+        .ring-label {
+            position: absolute; inset: 0;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .ring-pct  { font-size: 26px; font-weight: 900; color: #1a1a1a; line-height: 1; }
+        .ring-sub  { font-size: 9px; font-weight: 700; color: #aaa; text-transform: uppercase; letter-spacing: 0.5px; }
+        .ring-name { font-size: 13px; font-weight: 800; color: #444; text-align: center; }
+        .ring-detail { font-size: 11px; color: #bbb; font-weight: 600; text-align: center; }
+
+        /* STATS TABLE */
+        .stats-card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px; padding: 24px 28px;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .stats-title {
+            font-size: 15px; font-weight: 900; color: #ff4500;
+            margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
+        }
+        .stats-row {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 12px 0; border-bottom: 1px solid #f0f0f0;
+            gap: 12px;
+        }
+        .stats-row:last-child { border-bottom: none; }
+        .stats-label { font-size: 13px; font-weight: 700; color: #444; }
+        .stats-bar-wrap { flex: 1; height: 8px; background: #f0f0f0; border-radius: 50px; overflow: hidden; }
+        .stats-bar {
+            height: 100%; border-radius: 50px;
+            width: 0%; transition: width 1.4s cubic-bezier(0.4,0,0.2,1);
+        }
+        .stats-val { font-size: 13px; font-weight: 900; color: #1a1a1a; min-width: 36px; text-align: right; }
+
+        /* FOOTER NOTE */
+        .footer-note {
+            background: rgba(255,255,255,0.7);
+            border-radius: 14px; padding: 12px 20px;
+            font-size: 12px; color: #888; font-weight: 600;
+            text-align: center;
+        }
+
+        @media (max-width: 600px) {
+            .header-card { flex-wrap: wrap; }
+            .header-badge { margin-left: 0; }
+            .rings-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bubbles">
+        <span class="bubble"></span>
+        <span class="bubble"></span>
+        <span class="bubble"></span>
+        <span class="bubble"></span>
+        <span class="bubble"></span>
+    </div>
+
+    <div class="page-wrapper">
+
+        <!-- NAVBAR -->
+        <div class="navbar">
+            <img src="logo.jpg" alt="SE2026" class="navbar-logo">
+            <div class="navbar-text">
+                <h1>Dashboard Progress Lapangan</h1>
+                <p>BPS Kabupaten Sukoharjo — SE2026</p>
+            </div>
+            <a href="organik.html" class="btn-back">← Kembali</a>
+        </div>
+
+        <div class="content">
+
+            <!-- HEADER -->
+            <div class="header-card">
+                <div class="header-icon">📊</div>
+                <div>
+                    <div class="header-title">Dashboard Progress Lapangan</div>
+                    <div class="header-sub">Sensus Ekonomi 2026 — Kabupaten Sukoharjo</div>
+                </div>
+                <div class="header-badge">SE2026</div>
+            </div>
+
+            <!-- CIRCULAR RINGS -->
+            <div class="rings-grid">
+                <!-- Progress Pendataan -->
+                <div class="ring-card">
+                    <div class="ring-wrap">
+                        <svg width="120" height="120" viewBox="0 0 120 120">
+                            <circle class="ring-bg" cx="60" cy="60" r="55"/>
+                            <circle class="ring-fill" id="fill-pendataan" cx="60" cy="60" r="55" stroke="url(#rg1)"/>
+                            <defs>
+                                <linearGradient id="rg1" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#00c9a7"/>
+                                    <stop offset="100%" style="stop-color:#0077b6"/>
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                        <div class="ring-label">
+                            <span class="ring-pct" id="rpct-pendataan">0%</span>
+                            <span class="ring-sub">Progres</span>
+                        </div>
+                    </div>
+                    <div class="ring-name">Progress Pendataan</div>
+                    <div class="ring-detail" id="rdet-pendataan">— usaha tercatat</div>
+                </div>
+
+                <!-- Response Rate -->
+                <div class="ring-card">
+                    <div class="ring-wrap">
+                        <svg width="120" height="120" viewBox="0 0 120 120">
+                            <circle class="ring-bg" cx="60" cy="60" r="55"/>
+                            <circle class="ring-fill" id="fill-response" cx="60" cy="60" r="55" stroke="url(#rg2)"/>
+                            <defs>
+                                <linearGradient id="rg2" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#ff8c00"/>
+                                    <stop offset="100%" style="stop-color:#ff5500"/>
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                        <div class="ring-label">
+                            <span class="ring-pct" id="rpct-response">0%</span>
+                            <span class="ring-sub">Response</span>
+                        </div>
+                    </div>
+                    <div class="ring-name">Response Rate</div>
+                    <div class="ring-detail" id="rdet-response">— responden kooperatif</div>
+                </div>
+
+                <!-- Upload Dokumen -->
+                <div class="ring-card">
+                    <div class="ring-wrap">
+                        <svg width="120" height="120" viewBox="0 0 120 120">
+                            <circle class="ring-bg" cx="60" cy="60" r="55"/>
+                            <circle class="ring-fill" id="fill-upload" cx="60" cy="60" r="55" stroke="url(#rg3)"/>
+                            <defs>
+                                <linearGradient id="rg3" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#a855f7"/>
+                                    <stop offset="100%" style="stop-color:#7c3aed"/>
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                        <div class="ring-label">
+                            <span class="ring-pct" id="rpct-upload">0%</span>
+                            <span class="ring-sub">Upload</span>
+                        </div>
+                    </div>
+                    <div class="ring-name">Upload Dokumen</div>
+                    <div class="ring-detail" id="rdet-upload">— dokumen terupload</div>
+                </div>
+
+                <!-- Verifikasi Data -->
+                <div class="ring-card">
+                    <div class="ring-wrap">
+                        <svg width="120" height="120" viewBox="0 0 120 120">
+                            <circle class="ring-bg" cx="60" cy="60" r="55"/>
+                            <circle class="ring-fill" id="fill-verifikasi" cx="60" cy="60" r="55" stroke="url(#rg4)"/>
+                            <defs>
+                                <linearGradient id="rg4" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#f43f5e"/>
+                                    <stop offset="100%" style="stop-color:#e11d48"/>
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                        <div class="ring-label">
+                            <span class="ring-pct" id="rpct-verifikasi">0%</span>
+                            <span class="ring-sub">Verifikasi</span>
+                        </div>
+                    </div>
+                    <div class="ring-name">Verifikasi Data</div>
+                    <div class="ring-detail" id="rdet-verifikasi">— data terverifikasi</div>
+                </div>
+            </div>
+
+            <!-- BAR STATS -->
+            <div class="stats-card">
+                <div class="stats-title"><span>📋</span> Rincian Per Kecamatan</div>
+                <div class="stats-row">
+                    <div class="stats-label">Grogol</div>
+                    <div class="stats-bar-wrap"><div class="stats-bar" data-val="0" style="background: linear-gradient(90deg,#00c9a7,#0077b6)"></div></div>
+                    <div class="stats-val" id="bar-grogol">0%</div>
+                </div>
+                <div class="stats-row">
+                    <div class="stats-label">Baki</div>
+                    <div class="stats-bar-wrap"><div class="stats-bar" data-val="0" style="background: linear-gradient(90deg,#ff8c00,#ff5500)"></div></div>
+                    <div class="stats-val" id="bar-baki">0%</div>
+                </div>
+                <div class="stats-row">
+                    <div class="stats-label">Gatak</div>
+                    <div class="stats-bar-wrap"><div class="stats-bar" data-val="0" style="background: linear-gradient(90deg,#a855f7,#7c3aed)"></div></div>
+                    <div class="stats-val" id="bar-gatak">0%</div>
+                </div>
+                <div class="stats-row">
+                    <div class="stats-label">Kartasura</div>
+                    <div class="stats-bar-wrap"><div class="stats-bar" data-val="0" style="background: linear-gradient(90deg,#f43f5e,#e11d48)"></div></div>
+                    <div class="stats-val" id="bar-kartasura">0%</div>
+                </div>
+                <div class="stats-row">
+                    <div class="stats-label">Sukoharjo</div>
+                    <div class="stats-bar-wrap"><div class="stats-bar" data-val="0" style="background: linear-gradient(90deg,#00c9a7,#0077b6)"></div></div>
+                    <div class="stats-val" id="bar-sukoharjo">0%</div>
+                </div>
+                <div class="stats-row">
+                    <div class="stats-label">Nguter</div>
+                    <div class="stats-bar-wrap"><div class="stats-bar" data-val="0" style="background: linear-gradient(90deg,#ff8c00,#ff5500)"></div></div>
+                    <div class="stats-val" id="bar-nguter">0%</div>
+                </div>
+                <div class="stats-row">
+                    <div class="stats-label">Bendosari</div>
+                    <div class="stats-bar-wrap"><div class="stats-bar" data-val="0" style="background: linear-gradient(90deg,#a855f7,#7c3aed)"></div></div>
+                    <div class="stats-val" id="bar-bendosari">0%</div>
+                </div>
+                <div class="stats-row">
+                    <div class="stats-label">Polokarto</div>
+                    <div class="stats-bar-wrap"><div class="stats-bar" data-val="0" style="background: linear-gradient(90deg,#f43f5e,#e11d48)"></div></div>
+                    <div class="stats-val" id="bar-polokarto">0%</div>
+                </div>
+                <div class="stats-row">
+                    <div class="stats-label">Mojolaban</div>
+                    <div class="stats-bar-wrap"><div class="stats-bar" data-val="0" style="background: linear-gradient(90deg,#00c9a7,#0077b6)"></div></div>
+                    <div class="stats-val" id="bar-mojolaban">0%</div>
+                </div>
+                <div class="stats-row">
+                    <div class="stats-label">Tawangsari</div>
+                    <div class="stats-bar-wrap"><div class="stats-bar" data-val="0" style="background: linear-gradient(90deg,#ff8c00,#ff5500)"></div></div>
+                    <div class="stats-val" id="bar-tawangsari">0%</div>
+                </div>
+                <div class="stats-row">
+                    <div class="stats-label">Weru</div>
+                    <div class="stats-bar-wrap"><div class="stats-bar" data-val="0" style="background: linear-gradient(90deg,#a855f7,#7c3aed)"></div></div>
+                    <div class="stats-val" id="bar-weru">0%</div>
+                </div>
+                <div class="stats-row">
+                    <div class="stats-label">Bulu</div>
+                    <div class="stats-bar-wrap"><div class="stats-bar" data-val="0" style="background: linear-gradient(90deg,#f43f5e,#e11d48)"></div></div>
+                    <div class="stats-val" id="bar-bulu">0%</div>
+                </div>
+            </div>
+
+            <div class="footer-note">
+                📌 Data diperbarui secara manual oleh admin &nbsp;|&nbsp; Sensus Ekonomi 2026 — BPS Kabupaten Sukoharjo
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const CIRCUMFERENCE = 345;
+
+        const rings = [
+            { fillId: 'fill-pendataan',  pctId: 'rpct-pendataan',  value: 0 },
+            { fillId: 'fill-response',   pctId: 'rpct-response',   value: 0 },
+            { fillId: 'fill-upload',     pctId: 'rpct-upload',     value: 0 },
+            { fillId: 'fill-verifikasi', pctId: 'rpct-verifikasi', value: 0 },
+        ];
+
+        function animateRing(ring) {
+            const el = document.getElementById(ring.fillId);
+            const label = document.getElementById(ring.pctId);
+            if (!el || !label) return;
+            const pct = ring.value;
+            const offset = CIRCUMFERENCE - (pct / 100) * CIRCUMFERENCE;
+            el.style.strokeDashoffset = offset;
+            let current = 0;
+            const step = Math.max(pct / 60, 0.5);
+            const timer = setInterval(function() {
+                current = Math.min(current + step, pct);
+                label.textContent = Math.round(current) + '%';
+                if (current >= pct) clearInterval(timer);
+            }, 24);
+        }
+
+        function animateBars() {
+            document.querySelectorAll('.stats-bar').forEach(function(bar) {
+                const val = parseInt(bar.getAttribute('data-val')) || 0;
+                setTimeout(function() { bar.style.width = val + '%'; }, 200);
+            });
+        }
+
+        setTimeout(function() {
+            rings.forEach(animateRing);
+            animateBars();
+        }, 300);
+
+        function logout() {
+            sessionStorage.removeItem('currentUser');
+            window.location.replace('index.html');
+        }
+    </script>
+</body>
+</html>
