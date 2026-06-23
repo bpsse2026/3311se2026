@@ -71,9 +71,10 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                 length = int(self.headers.get('Content-Length', 0))
                 body = self.rfile.read(length)
                 data = json.loads(body)
-                pendataan = max(0, min(100, int(data.get('pendataan', 0))))
-                response  = max(0, min(100, int(data.get('response',  0))))
-                payload_data = {'pendataan': pendataan, 'response': response}
+                pendataan      = max(0, min(100, int(data.get('pendataan', 0))))
+                response       = max(0, min(100, int(data.get('response',  0))))
+                formsSubmitted = max(0, int(data.get('formsSubmitted', 0)))
+                payload_data = {'pendataan': pendataan, 'response': response, 'formsSubmitted': formsSubmitted}
                 payload_str = json.dumps(payload_data, indent=2)
                 with open(PROGRESS_FILE, 'w') as f:
                     f.write(payload_str)

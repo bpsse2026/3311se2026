@@ -401,16 +401,15 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Response Rate (%)</label>
+                    <label class="form-label">Forms Submitted</label>
                     <div class="pct-input-wrap">
-                        <input type="number" class="pct-input" id="pResponse" min="0" max="100" value="0">
-                        <span class="pct-symbol">%</span>
+                        <input type="number" class="pct-input" id="pFormsSubmitted" min="0" value="0" style="font-size:20px;">
                     </div>
                 </div>
             </div>
             <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
                 <button class="btn-save-progress" id="saveProgressBtn" onclick="saveProgress()">💾 Simpan Progress</button>
-                <span class="form-hint">Nilai 0–100. Langsung tampil di dashboard petugas setelah disimpan.</span>
+                <span class="form-hint">Langsung tampil di dashboard petugas setelah disimpan.</span>
             </div>
             <div id="progressSuccessBox" style="display:none;margin-top:12px;background:#f0fff4;border:1.5px solid #a0e0a0;border-radius:12px;padding:10px 16px;">
                 <div style="font-size:12px;font-weight:800;color:#27ae60;">✅ Progress berhasil disimpan ke GitHub!</div>
@@ -538,19 +537,20 @@
             if (!res.ok) return;
             const data = await res.json();
             progressData = data;
-            document.getElementById('pPendataan').value = data.pendataan ?? 0;
-            document.getElementById('pResponse').value  = data.response  ?? 0;
+            document.getElementById('pPendataan').value      = data.pendataan      ?? 0;
+            document.getElementById('pFormsSubmitted').value = data.formsSubmitted ?? 0;
         } catch(e) {}
     }
 
     async function saveProgress() {
-        const pendataan = Math.min(100, Math.max(0, parseInt(document.getElementById('pPendataan').value) || 0));
-        const response  = Math.min(100, Math.max(0, parseInt(document.getElementById('pResponse').value)  || 0));
+        const pendataan      = Math.min(100, Math.max(0, parseInt(document.getElementById('pPendataan').value)      || 0));
+        const response       = 0;
+        const formsSubmitted = Math.max(0, parseInt(document.getElementById('pFormsSubmitted').value) || 0);
         const btn = document.getElementById('saveProgressBtn');
         btn.disabled = true; btn.innerHTML = '⏳ Menyimpan...';
         document.getElementById('progressSuccessBox').style.display = 'none';
         document.getElementById('progressErrorBox').style.display   = 'none';
-        const data = { pendataan, response };
+        const data = { pendataan, response, formsSubmitted };
         try {
             const localRes = await fetch('/api/progress', {
                 method: 'POST',
