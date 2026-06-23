@@ -770,7 +770,7 @@
                                     <div style="font-size:26px;font-weight:900;color:white;line-height:1;" id="forms-submitted-count">28.315</div>
                                 </div>
                                 <div style="font-size:10px;color:#888;font-weight:700;text-align:center;line-height:1.4;">
-                                    dari <span style="color:#ff5500;font-weight:900;">441.413</span>
+                                    dari <span style="color:#ff5500;font-weight:900;" id="total-assignments-count">441.413</span>
                                 </div>
                             </div>
                             <div class="progress-item-name">Forms Submitted</div>
@@ -1235,7 +1235,7 @@
                         const step = Math.max(pct / 60, 0.5);
                         const timer = setInterval(function() {
                             current = Math.min(current + step, pct);
-                            label.textContent = Math.round(current) + '%';
+                            label.textContent = current.toFixed(2) + '%';
                             if (current >= pct) clearInterval(timer);
                         }, 24);
                     }
@@ -1256,6 +1256,10 @@
                     if (data.formsSubmitted != null) {
                         var el = document.getElementById('forms-submitted-count');
                         if (el) el.textContent = Number(data.formsSubmitted).toLocaleString('id-ID');
+                    }
+                    if (data.totalAssignments != null) {
+                        var el2 = document.getElementById('total-assignments-count');
+                        if (el2) el2.textContent = Number(data.totalAssignments).toLocaleString('id-ID');
                     }
                     animateRings();
                 })
