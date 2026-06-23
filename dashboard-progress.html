@@ -217,15 +217,21 @@
             <div class="powerbi-card">
                 <div class="powerbi-card-header">
                     <span>📈</span>
-                    <div>
+                    <div style="flex:1">
                         <h2>Monitoring SE2026 BPS Kabupaten Sukoharjo</h2>
                         <p>Data real-time dari Power BI</p>
                     </div>
+                    <button onclick="refreshPowerBI()" id="refreshBtn" style="
+                        background:rgba(255,255,255,0.2); color:white; border:1px solid rgba(255,255,255,0.4);
+                        border-radius:50px; padding:7px 16px; font-size:12px; font-weight:700;
+                        cursor:pointer; flex-shrink:0; transition:background 0.2s;">
+                        🔄 Refresh
+                    </button>
                 </div>
                 <div class="powerbi-iframe-wrap">
                     <iframe
+                        id="powerbi-iframe"
                         title="Monitoring SE2026 BPS Kabupaten Sukoharjo"
-                        src="https://app.powerbi.com/view?r=eyJrIjoiN2MyMjRjYzktZTgzYi00Yjc0LTgwNDYtMmZmNGZkYmZiZjIzIiwidCI6IjA1NmJlZmUzLTNhODktNDM1Ny04NDM4LTc4ZTczMGFjNWVjMyJ9"
                         frameborder="0"
                         allowfullscreen="true">
                     </iframe>
@@ -240,6 +246,29 @@
     </div>
 
     <script>
+        const PBI_BASE_URL = "https://app.powerbi.com/view?r=eyJrIjoiN2MyMjRjYzktZTgzYi00Yjc0LTgwNDYtMmZmNGZkYmZiZjIzIiwidCI6IjA1NmJlZmUzLTNhODktNDM1Ny04NDM4LTc4ZTczMGFjNWVjMyJ9";
+
+        function loadPowerBI() {
+            const iframe = document.getElementById('powerbi-iframe');
+            iframe.src = PBI_BASE_URL + "&nocache=" + Date.now();
+        }
+
+        function refreshPowerBI() {
+            const btn = document.getElementById('refreshBtn');
+            const iframe = document.getElementById('powerbi-iframe');
+            btn.textContent = '⏳ Memuat...';
+            btn.disabled = true;
+            iframe.src = '';
+            setTimeout(() => {
+                iframe.src = PBI_BASE_URL + "&nocache=" + Date.now();
+                iframe.onload = () => {
+                    btn.textContent = '🔄 Refresh';
+                    btn.disabled = false;
+                };
+            }, 300);
+        }
+
+        loadPowerBI();
     </script>
 </body>
 </html>
