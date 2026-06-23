@@ -527,51 +527,19 @@
     }
 
     async function fetchFromGitHub() {
-        const res = await fetch(RAW_URL + '?t=' + Date.now());
-        if (!res.ok) throw new Error('File tidak ditemukan di GitHub (' + res.status + ')');
+        const res = await fetch('/api/jadwal');
+        if (!res.ok) throw new Error('Gagal memuat jadwal dari server (' + res.status + ')');
         return await res.json();
-    }
-
-    async function pushToGitHub(data) {
-        const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
-        const body = { message: 'Update jadwal-events.json via admin panel', content, branch: GH_BRANCH };
-        if (fileSha) body.sha = fileSha;
-        const res = await fetch(API_URL, {
-            method: 'PUT',
-            headers: {
-                'Authorization': 'Bearer ' + ghToken,
-                'Content-Type': 'application/json',
-                'Accept': 'application/vnd.github+json',
-                'X-GitHub-Api-Version': '2022-11-28'
-            },
-            body: JSON.stringify(body)
-        });
-        const json = await res.json();
-        if (!res.ok) throw new Error(json.message || 'GitHub API error ' + res.status);
-        fileSha = json.content?.sha || fileSha;
     }
 
     async function fetchProgress() {
         try {
-            const res = await fetch(PROG_RAW_URL + '?t=' + Date.now());
+            const res = await fetch('/api/progress');
             if (!res.ok) return;
             const data = await res.json();
             progressData = data;
             document.getElementById('pPendataan').value = data.pendataan ?? 0;
             document.getElementById('pResponse').value  = data.response  ?? 0;
-        } catch(e) {}
-    }
-
-    async function getProgressSha() {
-        try {
-            const res = await fetch(PROG_API_URL, {
-                headers: {
-                    'Authorization': 'Bearer ' + ghToken,
-                    'Accept': 'application/vnd.github+json',
-                    'X-GitHub-Api-Version': '2022-11-28'
-                }
-            });
-            if (res.ok) { const j = await res.json(); progressSha = j.sha || ''; }
         } catch(e) {}
     }
 
@@ -584,38 +552,24 @@
         document.getElementById('progressErrorBox').style.display   = 'none';
         const data = { pendataan, response };
         try {
-            // 1. Save locally (immediate effect)
             const localRes = await fetch('/api/progress', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
             });
-            if (!localRes.ok) throw new Error('Server lokal gagal menyimpan');
+            if (!localRes.ok) throw new Error('Server gagal menyimpan');
 
             progressData = data;
             document.getElementById('progressSuccessBox').style.display = 'block';
             setTimeout(() => { document.getElementById('progressSuccessBox').style.display = 'none'; }, 5000);
 
-            // 2. Also sync to GitHub in background (best effort)
-            if (ghToken) {
-                getProgressSha().then(function() {
-                    const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
-                    const body    = { message: 'Update progress-data.json via admin panel', content, branch: GH_BRANCH };
-                    if (progressSha) body.sha = progressSha;
-                    return fetch(PROG_API_URL, {
-                        method: 'PUT',
-                        headers: {
-                            'Authorization': 'Bearer ' + ghToken,
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/vnd.github+json',
-                            'X-GitHub-Api-Version': '2022-11-28'
-                        },
-                        body: JSON.stringify(body)
-                    });
-                }).then(function(r) {
-                    return r.json().then(function(j) { if (r.ok) progressSha = j.content?.sha || progressSha; });
-                }).catch(function() {});
-            }
+            fetch('/api/github/push-progress', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ sha: progressSha })
+            }).then(r => r.json()).then(j => {
+                if (j.ok && j.sha) progressSha = j.sha;
+            }).catch(() => {});
         } catch(err) {
             document.getElementById('progressErrorMsg').textContent = '❌ Gagal menyimpan: ' + err.message;
             document.getElementById('progressErrorBox').style.display = 'block';
@@ -624,30 +578,14 @@
         }
     }
 
-    async function getFileSha() {
-        const res = await fetch(API_URL, {
-            headers: {
-                'Authorization': 'Bearer ' + ghToken,
-                'Accept': 'application/vnd.github+json',
-                'X-GitHub-Api-Version': '2022-11-28'
-            }
-        });
-        const j = await res.json();
-        if (res.status === 401) throw new Error(`HTTP 401 — Bad credentials. Token tidak valid atau kedaluwarsa.`);
-        if (res.status === 403) throw new Error(`HTTP 403 — Token tidak punya akses write ke repo "${GH_REPO}". Pastikan token punya scope "repo".`);
-        if (res.status === 404) throw new Error(`HTTP 404 — Repo atau file tidak ditemukan: ${GH_REPO}/${GH_FILE}`);
-        if (res.ok) fileSha = j.sha || '';
-    }
-
     let serverHasToken = false;
 
     async function detectEnvironment() {
         try {
-            const res = await fetch('/api/token');
-            const ct  = res.headers.get('content-type') || '';
-            if (res.ok && ct.includes('application/json')) {
+            const res = await fetch('/api/has-token');
+            if (res.ok) {
                 const data = await res.json();
-                if (data.token) { serverHasToken = true; return; }
+                if (data.hasToken) { serverHasToken = true; return; }
             }
         } catch(e) {}
         serverHasToken = false;
@@ -660,16 +598,10 @@
         if (pass !== ADMIN_PASS) { showErr('❌ Password salah. Coba lagi.'); return; }
         setLoading(true);
         try {
-            if (serverHasToken) {
-                const res  = await fetch('/api/token');
-                const data = await res.json();
-                ghToken = data.token;
-            } else {
+            if (!serverHasToken) {
                 const manual = document.getElementById('ghTokenInput').value.trim();
-                if (!manual) { showErr('⚠️ GitHub Token wajib diisi.'); setLoading(false); return; }
-                ghToken = manual;
+                if (!manual) { showErr('⚠️ GitHub Token wajib diisi karena server belum dikonfigurasi.'); setLoading(false); return; }
             }
-            await getFileSha();
             eventsData = await fetchFromGitHub();
             await fetchProgress();
             document.getElementById('loginGate').style.display   = 'none';
@@ -712,27 +644,22 @@
         document.getElementById('ghErrorBox').style.display = 'none';
         document.getElementById('ghSuccessBox').style.display = 'none';
         try {
-            await getFileSha();
-            const content = btoa(unescape(encodeURIComponent(JSON.stringify(eventsData, null, 2))));
-            const body = { message: 'Update jadwal-events.json via admin panel', content, branch: GH_BRANCH };
-            if (fileSha) body.sha = fileSha;
-            const res = await fetch(API_URL, {
-                method: 'PUT',
-                headers: {
-                    'Authorization': 'Bearer ' + ghToken,
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/vnd.github+json',
-                    'X-GitHub-Api-Version': '2022-11-28'
-                },
-                body: JSON.stringify(body)
+            await fetch('/api/jadwal', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(eventsData)
+            });
+            const res = await fetch('/api/github/push-jadwal', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ sha: fileSha })
             });
             const json = await res.json();
-            if (!res.ok) {
-                const detail = json.message || JSON.stringify(json);
-                showGhError(`HTTP ${res.status} — ${detail}\n\nRepo: ${GH_REPO}\nFile: ${GH_FILE}`);
+            if (!res.ok || !json.ok) {
+                showGhError(json.error || 'Gagal push ke GitHub');
                 return;
             }
-            fileSha = json.content?.sha || fileSha;
+            if (json.sha) fileSha = json.sha;
             markClean();
             showGhSuccess();
         } catch(err) {
