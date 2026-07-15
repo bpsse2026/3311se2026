@@ -255,17 +255,24 @@
 
         function refreshPowerBI() {
             const btn = document.getElementById('refreshBtn');
-            const iframe = document.getElementById('powerbi-iframe');
+            const oldIframe = document.getElementById('powerbi-iframe');
+            const wrap = oldIframe.parentElement;
             btn.textContent = '⏳ Memuat...';
             btn.disabled = true;
-            iframe.src = '';
-            setTimeout(() => {
-                iframe.src = PBI_BASE_URL + "&nocache=" + Date.now();
-                iframe.onload = () => {
-                    btn.textContent = '🔄 Refresh';
-                    btn.disabled = false;
-                };
-            }, 300);
+
+            // Fully destroy and recreate the iframe node (not just change its src)
+            // so no stale embedded report instance/state survives the refresh.
+            const newIframe = document.createElement('iframe');
+            newIframe.id = 'powerbi-iframe';
+            newIframe.title = 'Monitoring SE2026 BPS Kabupaten Sukoharjo V4';
+            newIframe.setAttribute('frameborder', '0');
+            newIframe.setAttribute('allowfullscreen', 'true');
+            newIframe.onload = () => {
+                btn.textContent = '🔄 Refresh';
+                btn.disabled = false;
+            };
+            wrap.replaceChild(newIframe, oldIframe);
+            newIframe.src = PBI_BASE_URL + "&nocache=" + Date.now();
         }
 
         loadPowerBI();
