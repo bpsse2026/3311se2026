@@ -743,7 +743,7 @@
                 <!-- DASHBOARD PROGRES LAPANGAN -->
                 <div class="card" id="section-dashboard-progres">
                     <div class="card-title"><span>📊</span> Progres Lapangan</div>
-                    <div style="font-size:11px; font-weight:700; color:#22a84a; margin-top:-6px; margin-bottom:8px; letter-spacing:0.3px;">🟢 Kondisi 15 Juli 00.14 WIB</div>
+                    <div id="kondisi-label" style="font-size:11px; font-weight:700; color:#22a84a; margin-top:-6px; margin-bottom:8px; letter-spacing:0.3px;">🟢 Kondisi ...</div>
                     <div class="progress-grid">
                         <div class="progress-item">
                             <div class="progress-ring-wrap">
@@ -1265,6 +1265,10 @@
                     if (data.totalAssignments != null) {
                         var el2 = document.getElementById('total-assignments-count');
                         if (el2) el2.textContent = Number(data.totalAssignments).toLocaleString('id-ID');
+                    }
+                    if (data.kondisi) {
+                        var elK = document.getElementById('kondisi-label');
+                        if (elK) elK.textContent = '🟢 Kondisi ' + data.kondisi;
                     }
                     animateRings();
                 })

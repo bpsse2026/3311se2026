@@ -412,6 +412,12 @@
                         <input type="number" class="pct-input" id="pTotalAssignments" min="0" value="441413" style="font-size:20px;">
                     </div>
                 </div>
+                <div class="form-group" style="grid-column:1/-1;">
+                    <label class="form-label">Kondisi (teks di bawah Progres Lapangan)</label>
+                    <div class="pct-input-wrap">
+                        <input type="text" class="pct-input" id="pKondisi" placeholder="cth: 15 Juli 00.14 WIB" style="font-size:16px;">
+                    </div>
+                </div>
             </div>
             <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
                 <button class="btn-save-progress" id="saveProgressBtn" onclick="saveProgress()">💾 Simpan Progress</button>
@@ -557,6 +563,7 @@
                 document.getElementById('pPendataan').value         = data.pendataan        ?? 0;
                 document.getElementById('pFormsSubmitted').value    = data.formsSubmitted   ?? 0;
                 document.getElementById('pTotalAssignments').value  = data.totalAssignments ?? 441413;
+                document.getElementById('pKondisi').value           = data.kondisi          ?? '';
             } else {
                 const res = await fetch(PROG_RAW_URL + '?t=' + Date.now());
                 if (!res.ok) return;
@@ -565,6 +572,7 @@
                 document.getElementById('pPendataan').value         = data.pendataan        ?? 0;
                 document.getElementById('pFormsSubmitted').value    = data.formsSubmitted   ?? 0;
                 document.getElementById('pTotalAssignments').value  = data.totalAssignments ?? 441413;
+                document.getElementById('pKondisi').value           = data.kondisi          ?? '';
             }
         } catch(e) {}
     }
@@ -574,11 +582,12 @@
         const response         = 0;
         const formsSubmitted   = Math.max(0, parseInt(document.getElementById('pFormsSubmitted').value)   || 0);
         const totalAssignments = Math.max(0, parseInt(document.getElementById('pTotalAssignments').value) || 441413);
+        const kondisi          = document.getElementById('pKondisi').value.trim();
         const btn = document.getElementById('saveProgressBtn');
         btn.disabled = true; btn.innerHTML = '⏳ Menyimpan...';
         document.getElementById('progressSuccessBox').style.display = 'none';
         document.getElementById('progressErrorBox').style.display   = 'none';
-        const data = { pendataan, response, formsSubmitted, totalAssignments };
+        const data = { pendataan, response, formsSubmitted, totalAssignments, kondisi };
         try {
             if (!serverHasToken) {
                 if (!ghToken) throw new Error('GitHub Token tidak tersedia. Silakan login ulang.');
