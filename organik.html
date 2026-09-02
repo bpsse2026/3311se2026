@@ -333,6 +333,30 @@
             box-shadow: 0 8px 28px rgba(34,197,94,0.45);
         }
         .btn-dashboard-progress:active { transform: scale(0.97); }
+        .progress-actions {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+        .btn-tagging {
+            display: flex; align-items: center; justify-content: center;
+            gap: 8px; width: 100%; text-align: center;
+            padding: 14px 20px; border-radius: 14px;
+            background: linear-gradient(135deg, #0ea5e9, #0284c7);
+            color: white; font-size: 14px; font-weight: 800;
+            text-decoration: none; letter-spacing: 0.2px;
+            box-shadow: 0 4px 18px rgba(14,165,233,0.3);
+            transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1),
+                        box-shadow 0.18s ease;
+        }
+        .btn-tagging:hover {
+            transform: scale(1.03);
+            box-shadow: 0 8px 28px rgba(14,165,233,0.4);
+        }
+        .btn-tagging:active { transform: scale(0.97); }
+        @media (max-width: 520px) {
+            .progress-actions { grid-template-columns: 1fr; }
+        }
 
         /* APP DOWNLOAD POPUP */
         .app-popup-overlay {
@@ -778,9 +802,14 @@
                         </div>
                     </div>
                     <p class="progress-updated">*Data diperbarui secara manual oleh admin</p>
-                    <a href="dashboard-progress.html" class="btn-dashboard-progress">
-                        📊 Dashboard Progress Lapangan
-                    </a>
+                    <div class="progress-actions">
+                        <a href="dashboard-progress.html" class="btn-dashboard-progress">
+                            📊 Dashboard Progress Lapangan
+                        </a>
+                        <a href="#" class="btn-tagging" target="_blank">
+                            🏷️ Cek Tagging SE2026
+                        </a>
+                    </div>
                 </div>
 
                 <!-- SAKU PENDATAAN LAPANGAN -->
